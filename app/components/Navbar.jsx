@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useI18n } from "@/app/i18n";
 
 export default function Navbar({
@@ -13,11 +14,23 @@ export default function Navbar({
   isLoggingOut = false,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("home");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const pathname = usePathname();
   const { language, setLanguage, languages, t } = useI18n();
 
-  const navLinks = ["home", "reminders", "health", "family", "settings"];
+  const navLinks = [
+    { label: "home", path: "/" },
+    { label: "reminders", path: "/reminders" },
+    { label: "health", path: "/health" },
+    { label: "family", path: "/family" },
+  ];
+
+  const isActiveLink = (path) => {
+    if (path === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(path);
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-white to-emerald-50/30 backdrop-blur-xl border-b border-emerald-100/50 shadow-sm">
@@ -46,17 +59,17 @@ export default function Navbar({
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <button
-                key={link}
-                onClick={() => setActiveLink(link)}
+              <Link
+                key={link.label}
+                href={link.path}
                 className={`px-4 xl:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                  activeLink === link
+                  isActiveLink(link.path)
                     ? "bg-green-100 text-green-700 shadow-sm"
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                 }`}
               >
-                {t ? t(`nav.${link}`) : link}
-              </button>
+                {t ? t(`nav.${link.label}`) : link.label}
+              </Link>
             ))}
           </div>
 
@@ -175,20 +188,18 @@ export default function Navbar({
         <div className="lg:hidden border-t border-gray-200 bg-white/95 backdrop-blur-xl">
           <div className="px-4 py-4 space-y-2">
             {navLinks.map((link) => (
-              <button
-                key={link}
-                onClick={() => {
-                  setActiveLink(link);
-                  setMobileOpen(false);
-                }}
-                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                  activeLink === link
+              <Link
+                key={link.label}
+                href={link.path}
+                onClick={() => setMobileOpen(false)}
+                className={`block w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                  isActiveLink(link.path)
                     ? "bg-green-100 text-green-700"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
-                {t ? t(`nav.${link}`) : link}
-              </button>
+                {t ? t(`nav.${link.label}`) : link.label}
+              </Link>
             ))}
           </div>
         </div>
