@@ -286,13 +286,44 @@ export default function MicButton() {
     [preferredLang]
   );
 
-  const handleCommand = useCallback(
-    (text) => {
-      const reply = getReply(text);
-      setResponseText(reply.text);
-      speak(reply.text, reply.lang);
+ const handleCommand = useCallback(
+    async (text) => {
+      // 1. Let the user know Tulsi is processing
+      setResponseText("Thinking...");
+      
+      // Determine the language so Tulsi speaks back in the right accent
+      const lang = detectTextLanguage(text, preferredLang);
+
+      try {
+        // 2. Send the spoken text to your Cohere AI route
+        const res = await fetch("/api/assistant", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: text }),
+        });
+
+        const data = await res.json();
+
+        // 3. Update the UI and speak the dynamic AI reply
+        if (res.ok && data.reply) {
+          setResponseText(data.reply);
+          speak(data.reply, lang);
+        } else {
+          // Handle API errors gracefully
+          const errorMsg = "I am sorry, I am having trouble connecting to my brain.";
+          setResponseText(errorMsg);
+          speak(errorMsg, lang);
+        }
+      } catch (error) {
+        console.error("AI Fetch Error:", error);
+        const networkErrorMsg = "Network error. Please check your connection.";
+        setResponseText(networkErrorMsg);
+        speak(networkErrorMsg, lang);
+      }
     },
-    [getReply, speak]
+    [preferredLang, speak]
   );
 
   useEffect(() => {

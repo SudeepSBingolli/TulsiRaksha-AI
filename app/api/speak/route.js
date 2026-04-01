@@ -1,9 +1,17 @@
-import { ElevenLabsClient } from "elevenlabs";
+/**
+ * Text-to-Speech API Endpoint
+ * Converts text to speech using ElevenLabs API
+ * 
+ * POST /api/speak
+ * Body: { text, voiceId, userVoiceId }
+ * Returns: Audio stream (MP3)
+ */
 
 export async function POST(request) {
   try {
     const { text, voiceId, userVoiceId } = await request.json();
 
+    // Validate input
     if (!text) {
       return new Response(
         JSON.stringify({ error: "Text is required" }),
@@ -22,25 +30,41 @@ export async function POST(request) {
       );
     }
 
-    const client = new ElevenLabsClient({ apiKey });
-
     // Use user's cloned voice if available, otherwise use default voice
     const selectedVoiceId = userVoiceId || voiceId || "EXAVITQu4vLvkujnVJL5";
 
-    // Generate speech from text
-    const audioStream = await client.generate({
-      voice: selectedVoiceId,
-      text: text,
-      model_id: "eleven_multilingual_v2",
-    });
+    // Call ElevenLabs API directly
+    const elevenLabsResponse = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+          },
+        }),
+      }
+    );
 
-    // Convert stream to Buffer
-    const audioBuffer = Buffer.from(await audioStream.arrayBuffer());
+    if (!elevenLabsResponse.ok) {
+      const errorData = await elevenLabsResponse.json();
+      throw new Error(`ElevenLabs API error: ${JSON.stringify(errorData)}`);
+    }
+
+    // Get audio buffer
+    const audioBuffer = await elevenLabsResponse.arrayBuffer();
 
     return new Response(audioBuffer, {
       headers: {
         "Content-Type": "audio/mpeg",
-        "Content-Length": audioBuffer.length,
+        "Content-Length": audioBuffer.byteLength,
         "Cache-Control": "public, max-age=3600",
       },
     });

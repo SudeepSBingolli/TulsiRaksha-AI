@@ -45,7 +45,8 @@ export default function VoiceAssistant({
           setVoicePreferences(data);
         }
       } catch (error) {
-        console.error("Error fetching voice preferences:", error);
+        // Table may not exist yet - silently continue with default preferences
+        console.debug("Voice preferences unavailable, using defaults");
       }
     };
 
@@ -60,6 +61,7 @@ export default function VoiceAssistant({
     setDisplayText(textToSpeak);
 
     try {
+      // Try ElevenLabs API first
       const response = await fetch("/api/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,19 +72,44 @@ export default function VoiceAssistant({
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to generate voice");
+      if (response.ok) {
+        // ElevenLabs succeeded
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      if (audioRef.current) {
-        audioRef.current.src = audioUrl;
-        audioRef.current.volume = volume / 100;
-        audioRef.current.play();
-        setIsPlaying(true);
+        if (audioRef.current) {
+          audioRef.current.src = audioUrl;
+          audioRef.current.volume = volume / 100;
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } else {
+        // ElevenLabs failed, use browser fallback
+        console.warn("ElevenLabs API failed, using browser speech synthesis fallback");
+        useBrowserSpeechSynthesis(textToSpeak);
       }
     } catch (error) {
-      console.error("Voice generation error:", error);
+      console.warn("Voice generation error, using browser fallback:", error);
+      // Fallback to browser speech synthesis
+      useBrowserSpeechSynthesis(textToSpeak);
+    }
+  };
+
+  // Browser speech synthesis fallback
+  const useBrowserSpeechSynthesis = (text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = volume / 100;
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onstart = () => setIsPlaying(true);
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+    } else {
+      console.error("Speech synthesis not supported in this browser");
       setIsLoading(false);
     }
   };

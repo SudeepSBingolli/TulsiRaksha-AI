@@ -9,6 +9,7 @@ import ActivityChart from "./ActivityChart";
 import QuickActions from "./QuickActions";
 import HealthMetrics from "./HealthMetrics";
 import EmotionVoiceCompanion from "./EmotionVoiceCompanion";
+import VoiceAssistant from "./VoiceAssistant";
 import { useI18n } from "@/app/i18n";
 
 export default function Dashboard({ userName = "Appa", userId = null }) {
@@ -114,6 +115,15 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
               demoActive={demoStep === "sos"}
               autoTriggerSos={demoStep === "sos"}
             />
+            <div className="bg-white rounded-3xl border border-emerald-100 p-6 sm:p-7 shadow-sm">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">🎙️ Voice Assistant</h3>
+              <VoiceAssistant
+                userName={userName}
+                userId={userId}
+                autoPlay={false}
+                message={`Hi ${userName}! I'm here with you. How are you feeling today?`}
+              />
+            </div>
             <EmotionVoiceCompanion />
             <UpcomingReminders t={t} />
           </div>
