@@ -1,9 +1,5 @@
 import twilio from "twilio";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -22,6 +18,7 @@ function normalizePhoneNumber(phone) {
 }
 
 export async function POST(request) {
+  const supabase = getAdminClient();
   try {
     const { phone } = await request.json();
 

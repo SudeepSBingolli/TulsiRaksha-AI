@@ -1,21 +1,17 @@
 import nodemailer from "nodemailer";
 import crypto from "crypto";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-// Configure your email service (Gmail, SendGrid, etc.)
-const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request) {
+  const supabase = getAdminClient();
+  // Configure your email service (Gmail, SendGrid, etc.)
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE || "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
   try {
     const { email } = await request.json();
 
