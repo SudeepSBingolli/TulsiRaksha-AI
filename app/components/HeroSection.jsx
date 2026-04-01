@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "./ui/Button";
+import MicButton from "./MicButton";
 import Card from "./ui/Card";
 import { useI18n } from "@/app/i18n";
 
@@ -10,25 +11,25 @@ export default function HeroSection() {
   const features = [
     {
       icon: "🎙️",
-      title: "Voice Assistant",
-      description: "Simple voice guidance in familiar language for reminders and safety.",
+      title: t("hero.featureVoiceTitle"),
+      description: t("hero.featureVoiceDesc"),
     },
     {
       icon: "📈",
-      title: "Health Monitoring",
-      description: "Live health tracking with clear alerts and family notifications.",
+      title: t("hero.featureHealthTitle"),
+      description: t("hero.featureHealthDesc"),
     },
     {
       icon: "💊",
-      title: "Medicine Support",
-      description: "Timely reminders with easy-to-understand check-ins.",
+      title: t("hero.featureMedicineTitle"),
+      description: t("hero.featureMedicineDesc"),
     },
   ];
 
   const benefits = [
-    "Large and readable interface",
-    "One-tap actions for quick help",
-    "Calm and reassuring visual design",
+    t("hero.benefit1"),
+    t("hero.benefit2"),
+    t("hero.benefit3"),
   ];
 
   return (
@@ -50,29 +51,29 @@ export default function HeroSection() {
               TulsiRaksha AI
             </h1>
             <p className="text-2xl sm:text-3xl font-bold text-emerald-700">
-              Never Alone. Always Cared For.
+              {t("hero.sub1")} {t("hero.sub2")}
             </p>
             <p className="max-w-3xl mx-auto text-lg sm:text-xl text-gray-700 leading-relaxed">
-              A warm and simple care companion for elders. Health monitoring, voice guidance,
-              and family support in one easy experience.
+              {t("hero.description")}
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-2">
               <Button href="/login" className="text-lg sm:text-xl px-8 py-4">
-                Get Started
+                {t("hero.ctaPrimary")}
               </Button>
-              <Button variant="secondary" className="text-lg sm:text-xl px-8 py-4">
-                <span aria-hidden>🎙️</span>
-                Voice Assistant
+              <Button href="/login" className="text-lg sm:text-xl px-8 py-4">
+                {t("hero.ctaPrimary")}
               </Button>
+
+              <MicButton inline />
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 text-base sm:text-lg">
               <span className="rounded-2xl border border-emerald-100 bg-white px-4 py-2 text-emerald-700 font-semibold">
-                You are safe ❤️
+                {t("hero.youAreSafe")}
               </span>
               <span className="rounded-2xl border border-emerald-100 bg-white px-4 py-2 text-emerald-700 font-semibold">
-                Monitoring active
+                {t("hero.monitoringActive")}
               </span>
             </div>
           </div>
@@ -89,8 +90,12 @@ export default function HeroSection() {
                 <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-2xl">
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">{feature.title}</h3>
-                <p className="text-lg text-gray-700 leading-relaxed">{feature.description}</p>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {feature.title}
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             </Card>
           ))}
@@ -99,11 +104,14 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           <Card className="bg-white/90">
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              Benefits for Elders
+              {t("hero.benefitsTitle")}
             </h3>
             <ul className="space-y-3">
               {benefits.map((item) => (
-                <li key={item} className="flex items-center gap-3 text-lg text-gray-700">
+                <li
+                  key={item}
+                  className="flex items-center gap-3 text-lg text-gray-700"
+                >
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                   {item}
                 </li>
@@ -113,14 +121,17 @@ export default function HeroSection() {
 
           <Card className="bg-gradient-to-br from-emerald-50 to-white border-emerald-200/90">
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              Family Connection
+              {t("hero.familyTitle")}
             </h3>
             <p className="text-lg text-gray-700 leading-relaxed mb-5">
-              Share updates with family members and caregivers, so everyone stays informed and
-              connected with peace of mind.
+              {t("hero.familyDesc")}
             </p>
-            <Button href="/family" variant="ghost" className="text-lg self-start">
-              Explore Family Features
+            <Button
+              href="/family"
+              variant="ghost"
+              className="text-lg self-start"
+            >
+              {t("hero.familyLink")}
             </Button>
           </Card>
         </div>

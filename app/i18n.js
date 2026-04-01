@@ -20,6 +20,40 @@ const DICTIONARY = {
       logout: "Logout",
       loggingOut: "Logging out...",
       login: "Login",
+      signup: "Sign Up",
+    },
+    landing: {
+      badge: "AI-Powered Elder Care Companion",
+      title: "TulsiRaksha AI",
+      subtitle1: "Never Alone.",
+      subtitle2: "Always Cared For.",
+      description:
+        "A warm and simple care companion for elders. Health monitoring, voice guidance, and family support in one easy experience.",
+      getStarted: "Get Started",
+      voiceAssistant: "Voice Assistant",
+      youAreSafe: "You are safe ❤️",
+      monitoringActive: "Monitoring active",
+      stopVoice: "Stop Voice",
+      speaking: "Tulsi is speaking…",
+      voiceGuidance:
+        "Welcome to TulsiRaksha AI, your personal health companion for elders. To begin, click the green Get Started button. It will take you to the login page. If you already have an account, enter your email and password and click Login. If you are new, click Sign Up at the top right corner of the page. Enter your name, email, and a password to create your account. Once you are logged in, you will see your health dashboard with medicine reminders, health vitals, and family connection features. You can always click the voice assistant button again if you need help.",
+      featureVoiceTitle: "Voice Assistant",
+      featureVoiceDesc:
+        "Simple voice guidance in familiar language for reminders and safety.",
+      featureHealthTitle: "Health Monitoring",
+      featureHealthDesc:
+        "Live health tracking with clear alerts and family notifications.",
+      featureMedicineTitle: "Medicine Support",
+      featureMedicineDesc:
+        "Timely reminders with easy-to-understand check-ins.",
+      benefitsTitle: "Benefits for Elders",
+      benefit1: "Large and readable interface",
+      benefit2: "One-tap actions for quick help",
+      benefit3: "Calm and reassuring visual design",
+      familyTitle: "Family Connection",
+      familyDesc:
+        "Share updates with family members and caregivers, so everyone stays informed and connected with peace of mind.",
+      familyLink: "Explore Family Features",
     },
     page: {
       connecting: "Connecting to health sensors...",
@@ -31,11 +65,32 @@ const DICTIONARY = {
       badge: "AI-Powered Elder Care Companion",
       sub1: "Never Alone.",
       sub2: "Always Cared For.",
+      description:
+        "A warm and simple care companion for elders. Health monitoring, voice guidance, and family support in one easy experience.",
       ctaPrimary: "Get Started Free",
-      ctaSecondary: "Watch Demo",
+      ctaSecondary: "Voice Assistant",
       trustFamilies: "10,000+ Families Trust Us",
       hipaa: "HIPAA Compliant",
       madeInIndia: "Made in India",
+      youAreSafe: "You are safe ❤️",
+      monitoringActive: "Monitoring active",
+      featureVoiceTitle: "Voice Assistant",
+      featureVoiceDesc:
+        "Simple voice guidance in familiar language for reminders and safety.",
+      featureHealthTitle: "Health Monitoring",
+      featureHealthDesc:
+        "Live health tracking with clear alerts and family notifications.",
+      featureMedicineTitle: "Medicine Support",
+      featureMedicineDesc:
+        "Timely reminders with easy-to-understand check-ins.",
+      benefitsTitle: "Benefits for Elders",
+      benefit1: "Large and readable interface",
+      benefit2: "One-tap actions for quick help",
+      benefit3: "Calm and reassuring visual design",
+      familyTitle: "Family Connection",
+      familyDesc:
+        "Share updates with family members and caregivers, so everyone stays informed and connected with peace of mind.",
+      familyLink: "Explore Family Features",
     },
     dashboard: {
       title: "Your Dashboard",
@@ -87,7 +142,8 @@ const DICTIONARY = {
       lastUpdated: "Last updated",
       connecting: "Connecting to health sensors...",
       highRisk: "⚠️ High Risk Detected",
-      sitRelax: "Please sit down and relax. Family can be notified now.",
+      sitRelax:
+        "Please sit down and relax. Family can be notified now.",
       liveStatus: "Live Health Status",
       risk: "Risk",
       status: "Status: Monitoring Active",
@@ -97,7 +153,8 @@ const DICTIONARY = {
       sendUpdate: "Send Update to Family",
       updateLogged: "Update logged in console (simulated send).",
       alertPopup: "🔴 ALERT POPUP",
-      monitoringText: "Please sit down and relax. We are monitoring you continuously.",
+      monitoringText:
+        "Please sit down and relax. We are monitoring you continuously.",
       heartRate: "Heart Rate",
       dailySteps: "Daily Steps",
       sleep: "Sleep",
@@ -116,15 +173,18 @@ const DICTIONARY = {
     mic: {
       label: "Speak to Tulsi",
       listening: "Listening...",
-      guidance: "Speak now. Tulsi will understand medicine, safety, and greeting commands.",
-      noMic: "Microphone not supported. Use quick voice command buttons below.",
+      guidance:
+        "Speak now. Tulsi will understand medicine, safety, and greeting commands.",
+      noMic:
+        "Microphone not supported. Use quick voice command buttons below.",
       heard: "Heard:",
       medicineBtn: "💊 Medicine Reminder",
       safetyBtn: "🛡️ Safety Message",
       greetingBtn: "👋 Greeting",
     },
     footer: {
-      description: "AI-powered companion for dignified elderly care. Built with love in India 🇮🇳",
+      description:
+        "AI-powered companion for dignified elderly care. Built with love in India 🇮🇳",
       features: "Features",
       support: "Support",
       emergency: "Emergency",
@@ -145,6 +205,7 @@ const DICTIONARY = {
       supportAccess: "Accessibility",
     },
   },
+
   KN: {
     nav: {
       home: "ಮುಖಪುಟ",
@@ -156,22 +217,78 @@ const DICTIONARY = {
       logout: "ಲಾಗ್ಔಟ್",
       loggingOut: "ಲಾಗ್ಔಟ್ ಆಗುತ್ತಿದೆ...",
       login: "ಲಾಗಿನ್",
+      signup: "ಸೈನ್ ಅಪ್",
+    },
+    landing: {
+      badge: "AI ಆಧಾರಿತ ಹಿರಿಯರ ಆರೈಕೆ ಸಂಗಾತಿ",
+      title: "ತುಳಸಿರಕ್ಷ AI",
+      subtitle1: "ಯಾವತ್ತೂ ಒಂಟಿಯಾಗುವುದಿಲ್ಲ.",
+      subtitle2: "ಯಾವತ್ತೂ ಕಾಳಜಿಯಲ್ಲಿ.",
+      description:
+        "ಹಿರಿಯರಿಗೆ ಆತ್ಮೀಯ ಮತ್ತು ಸರಳ ಆರೈಕೆ ಸಂಗಾತಿ. ಆರೋಗ್ಯ ಮೇಲ್ವಿಚಾರಣೆ, ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ, ಮತ್ತು ಕುಟುಂಬ ಬೆಂಬಲ ಒಂದೇ ಅನುಭವದಲ್ಲಿ.",
+      getStarted: "ಪ್ರಾರಂಭಿಸಿ",
+      voiceAssistant: "ಧ್ವನಿ ಸಹಾಯಕ",
+      youAreSafe: "ನೀವು ಸುರಕ್ಷಿತ ❤️",
+      monitoringActive: "ಮಾನಿಟರಿಂಗ್ ಸಕ್ರಿಯ",
+      stopVoice: "ಧ್ವನಿ ನಿಲ್ಲಿಸಿ",
+      speaking: "ತುಳಸಿ ಮಾತನಾಡುತ್ತಿದೆ…",
+      voiceGuidance:
+        "ತುಳಸಿರಕ್ಷ AI ಗೆ ಸ್ವಾಗತ, ಹಿರಿಯರಿಗೆ ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಆರೋಗ್ಯ ಸಂಗಾತಿ. ಪ್ರಾರಂಭಿಸಲು, ಹಸಿರು ಪ್ರಾರಂಭಿಸಿ ಬಟನ್ ಒತ್ತಿ. ಇದು ನಿಮ್ಮನ್ನು ಲಾಗಿನ್ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತದೆ. ನೀವು ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದರೆ, ನಿಮ್ಮ ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ ಮತ್ತು ಲಾಗಿನ್ ಒತ್ತಿ. ನೀವು ಹೊಸಬರಾಗಿದ್ದರೆ, ಪುಟದ ಮೇಲ್ಭಾಗದಲ್ಲಿ ಸೈನ್ ಅಪ್ ಒತ್ತಿ. ನಿಮ್ಮ ಹೆಸರು, ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ ಖಾತೆ ಮಾಡಿ. ಲಾಗಿನ್ ಆದ ನಂತರ, ನಿಮ್ಮ ಆರೋಗ್ಯ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಕಾಣಿಸುತ್ತದೆ.",
+      featureVoiceTitle: "ಧ್ವನಿ ಸಹಾಯಕ",
+      featureVoiceDesc:
+        "ಜ್ಞಾಪನೆ ಮತ್ತು ಸುರಕ್ಷತೆಗಾಗಿ ಪರಿಚಿತ ಭಾಷೆಯಲ್ಲಿ ಸರಳ ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ.",
+      featureHealthTitle: "ಆರೋಗ್ಯ ಮೇಲ್ವಿಚಾರಣೆ",
+      featureHealthDesc:
+        "ಸ್ಪಷ್ಟ ಎಚ್ಚರಿಕೆಗಳು ಮತ್ತು ಕುಟುಂಬ ಸೂಚನೆಗಳೊಂದಿಗೆ ಲೈವ್ ಆರೋಗ್ಯ ಟ್ರಾಕಿಂಗ್.",
+      featureMedicineTitle: "ಔಷಧ ಬೆಂಬಲ",
+      featureMedicineDesc:
+        "ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವ ಚೆಕ್-ಇನ್‌ಗಳೊಂದಿಗೆ ಸಕಾಲಿಕ ಜ್ಞಾಪನೆಗಳು.",
+      benefitsTitle: "ಹಿರಿಯರಿಗೆ ಪ್ರಯೋಜನಗಳು",
+      benefit1: "ದೊಡ್ಡ ಮತ್ತು ಓದಲು ಸುಲಭವಾದ ಇಂಟರ್ಫೇಸ್",
+      benefit2: "ತ್ವರಿತ ಸಹಾಯಕ್ಕಾಗಿ ಒಂದೇ-ಟ್ಯಾಪ್ ಕ್ರಿಯೆಗಳು",
+      benefit3: "ಶಾಂತ ಮತ್ತು ಭರವಸೆಯ ವಿನ್ಯಾಸ",
+      familyTitle: "ಕುಟುಂಬ ಸಂಪರ್ಕ",
+      familyDesc:
+        "ಕುಟುಂಬ ಸದಸ್ಯರು ಮತ್ತು ಆರೈಕೆದಾರರೊಂದಿಗೆ ಅಪ್ಡೇಟ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.",
+      familyLink: "ಕುಟುಂಬ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
     },
     page: {
       connecting: "ಆರೋಗ್ಯ ಸೆನ್ಸರ್‌ಗಳಿಗೆ ಸಂಪರ್ಕವಾಗುತ್ತಿದೆ...",
       syncTitle: "ಡೇಟಾ ಸಿಂಕ್ ಮಾಡಲು ಲಾಗಿನ್ ಮಾಡಿ",
-      offlineText: "ಆಫ್‌ಲೈನ್ ಡೆಮೋ ಮೋಡ್ ಸಕ್ರಿಯವಾಗಿದೆ. ನೀವು ಸುರಕ್ಷಿತ ❤️",
+      offlineText:
+        "ಆಫ್‌ಲೈನ್ ಡೆಮೋ ಮೋಡ್ ಸಕ್ರಿಯವಾಗಿದೆ. ನೀವು ಸುರಕ್ಷಿತ ❤️",
       goLogin: "ಲಾಗಿನ್‌ಗೆ ಹೋಗಿ",
     },
     hero: {
       badge: "AI ಆಧಾರಿತ ಹಿರಿಯರ ಆರೈಕೆ ಸಂಗಾತಿ",
       sub1: "ಯಾವತ್ತೂ ಒಂಟಿಯಾಗುವುದಿಲ್ಲ.",
       sub2: "ಯಾವತ್ತೂ ಕಾಳಜಿಯಲ್ಲಿ.",
+      description:
+        "ಹಿರಿಯರಿಗೆ ಆತ್ಮೀಯ ಮತ್ತು ಸರಳ ಆರೈಕೆ ಸಂಗಾತಿ. ಆರೋಗ್ಯ ಮೇಲ್ವಿಚಾರಣೆ, ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ, ಮತ್ತು ಕುಟುಂಬ ಬೆಂಬಲ ಒಂದೇ ಅನುಭವದಲ್ಲಿ.",
       ctaPrimary: "ಉಚಿತವಾಗಿ ಪ್ರಾರಂಭಿಸಿ",
-      ctaSecondary: "ಡೆಮೋ ನೋಡಿ",
+      ctaSecondary: "ಧ್ವನಿ ಸಹಾಯಕ",
       trustFamilies: "10,000+ ಕುಟುಂಬಗಳು ನಮ್ಮನ್ನು ನಂಬಿವೆ",
       hipaa: "HIPAA ಅನುಗುಣ",
       madeInIndia: "ಭಾರತದಲ್ಲಿ ನಿರ್ಮಿಸಲಾಗಿದೆ",
+      youAreSafe: "ನೀವು ಸುರಕ್ಷಿತ ❤️",
+      monitoringActive: "ಮಾನಿಟರಿಂಗ್ ಸಕ್ರಿಯ",
+      featureVoiceTitle: "ಧ್ವನಿ ಸಹಾಯಕ",
+      featureVoiceDesc:
+        "ಜ್ಞಾಪನೆ ಮತ್ತು ಸುರಕ್ಷತೆಗಾಗಿ ಪರಿಚಿತ ಭಾಷೆಯಲ್ಲಿ ಸರಳ ಧ್ವನಿ ಮಾರ್ಗದರ್ಶನ.",
+      featureHealthTitle: "ಆರೋಗ್ಯ ಮೇಲ್ವಿಚಾರಣೆ",
+      featureHealthDesc:
+        "ಸ್ಪಷ್ಟ ಎಚ್ಚರಿಕೆಗಳು ಮತ್ತು ಕುಟುಂಬ ಸೂಚನೆಗಳೊಂದಿಗೆ ಲೈವ್ ಆರೋಗ್ಯ ಟ್ರಾಕಿಂಗ್.",
+      featureMedicineTitle: "ಔಷಧ ಬೆಂಬಲ",
+      featureMedicineDesc:
+        "ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವ ಚೆಕ್-ಇನ್‌ಗಳೊಂದಿಗೆ ಸಕಾಲಿಕ ಜ್ಞಾಪನೆಗಳು.",
+      benefitsTitle: "ಹಿರಿಯರಿಗೆ ಪ್ರಯೋಜನಗಳು",
+      benefit1: "ದೊಡ್ಡ ಮತ್ತು ಓದಲು ಸುಲಭವಾದ ಇಂಟರ್ಫೇಸ್",
+      benefit2: "ತ್ವರಿತ ಸಹಾಯಕ್ಕಾಗಿ ಒಂದೇ-ಟ್ಯಾಪ್ ಕ್ರಿಯೆಗಳು",
+      benefit3: "ಶಾಂತ ಮತ್ತು ಭರವಸೆಯ ವಿನ್ಯಾಸ",
+      familyTitle: "ಕುಟುಂಬ ಸಂಪರ್ಕ",
+      familyDesc:
+        "ಕುಟುಂಬ ಸದಸ್ಯರು ಮತ್ತು ಆರೈಕೆದಾರರೊಂದಿಗೆ ಅಪ್ಡೇಟ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ.",
+      familyLink: "ಕುಟುಂಬ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
     },
     dashboard: {
       title: "ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
@@ -216,14 +333,16 @@ const DICTIONARY = {
       sos: "SOS ಅಲರ್ಟ್",
       orderMeds: "ಔಷಧ ಆರ್ಡರ್",
       playBhajan: "ಭಜನ್ ಚಾಲನೆ",
-      emergencySent: "🚨 ತುರ್ತು ಅಲರ್ಟ್ ಕುಟುಂಬಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ!",
+      emergencySent:
+        "🚨 ತುರ್ತು ಅಲರ್ಟ್ ಕುಟುಂಬಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ!",
     },
     health: {
       title: "ಆರೋಗ್ಯ ಮಾನಗಳು",
       lastUpdated: "ಕೊನೆಯ ನವೀಕರಣ",
       connecting: "ಆರೋಗ್ಯ ಸೆನ್ಸರ್‌ಗಳಿಗೆ ಸಂಪರ್ಕವಾಗುತ್ತಿದೆ...",
       highRisk: "⚠️ ಹೆಚ್ಚಿನ ಅಪಾಯ ಕಂಡುಬಂದಿದೆ",
-      sitRelax: "ದಯವಿಟ್ಟು ಕುಳಿತು ವಿಶ್ರಾಂತಿ ಮಾಡಿ. ಕುಟುಂಬಕ್ಕೆ ಮಾಹಿತಿ ನೀಡಬಹುದು.",
+      sitRelax:
+        "ದಯವಿಟ್ಟು ಕುಳಿತು ವಿಶ್ರಾಂತಿ ಮಾಡಿ. ಕುಟುಂಬಕ್ಕೆ ಮಾಹಿತಿ ನೀಡಬಹುದು.",
       liveStatus: "ಲೈವ್ ಆರೋಗ್ಯ ಸ್ಥಿತಿ",
       risk: "ಅಪಾಯ",
       status: "ಸ್ಥಿತಿ: ಮಾನಿಟರಿಂಗ್ ಸಕ್ರಿಯ",
@@ -231,9 +350,11 @@ const DICTIONARY = {
       offline: "ಆಫ್‌ಲೈನ್ ಮೋಡ್",
       synced: "Supabase ಜೊತೆಗೆ ಸಿಂಕ್ ಆಗಿದೆ",
       sendUpdate: "ಕುಟುಂಬಕ್ಕೆ ಅಪ್ಡೇಟ್ ಕಳುಹಿಸಿ",
-      updateLogged: "ಅಪ್ಡೇಟ್ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ದಾಖಲಿಸಲಾಗಿದೆ (ಸಿಮ್ಯುಲೇಟೆಡ್).",
+      updateLogged:
+        "ಅಪ್ಡೇಟ್ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ದಾಖಲಿಸಲಾಗಿದೆ (ಸಿಮ್ಯುಲೇಟೆಡ್).",
       alertPopup: "🔴 ಅಲರ್ಟ್ ಪಾಪ್‌ಅಪ್",
-      monitoringText: "ದಯವಿಟ್ಟು ಕುಳಿತು ವಿಶ್ರಾಂತಿ ಮಾಡಿ. ನಾವು ನಿರಂತರವಾಗಿ ಮಾನಿಟರ್ ಮಾಡುತ್ತೇವೆ.",
+      monitoringText:
+        "ದಯವಿಟ್ಟು ಕುಳಿತು ವಿಶ್ರಾಂತಿ ಮಾಡಿ. ನಾವು ನಿರಂತರವಾಗಿ ಮಾನಿಟರ್ ಮಾಡುತ್ತೇವೆ.",
       heartRate: "ಹೃದಯ ಮಿಡಿತ",
       dailySteps: "ದಿನದ ಹೆಜ್ಜೆಗಳು",
       sleep: "ನಿದ್ರೆ",
@@ -252,21 +373,25 @@ const DICTIONARY = {
     mic: {
       label: "ತುಳಸಿಯ ಜೊತೆ ಮಾತನಾಡಿ",
       listening: "ಕೆಳಗುತ್ತಿದೆ...",
-      guidance: "ಈಗ ಮಾತನಾಡಿ. ತುಳಸಿ ಔಷಧ, ಸುರಕ್ಷತೆ ಮತ್ತು ಶುಭಾಶಯ ಕಮಾಂಡ್‌ಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತದೆ.",
-      noMic: "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಇಲ್ಲ. ಕೆಳಗಿನ ಕ್ವಿಕ್ ಬಟನ್‌ಗಳನ್ನು ಬಳಸಿ.",
+      guidance:
+        "ಈಗ ಮಾತನಾಡಿ. ತುಳಸಿ ಔಷಧ, ಸುರಕ್ಷತೆ ಮತ್ತು ಶುಭಾಶಯ ಕಮಾಂಡ್‌ಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತದೆ.",
+      noMic:
+        "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮೈಕ್ ಇಲ್ಲ. ಕೆಳಗಿನ ಕ್ವಿಕ್ ಬಟನ್‌ಗಳನ್ನು ಬಳಸಿ.",
       heard: "ಕೆಳಗಿನದು:",
       medicineBtn: "💊 ಔಷಧ ಜ್ಞಾಪನೆ",
       safetyBtn: "🛡️ ಸುರಕ್ಷತಾ ಸಂದೇಶ",
       greetingBtn: "👋 ಶುಭಾಶಯ",
     },
     footer: {
-      description: "ಗೌರವಯುತ ಹಿರಿಯರ ಆರೈಕೆಗೆ AI ಸಂಗಾತಿ. ಭಾರತದಲ್ಲಿ ಪ್ರೀತಿಯಿಂದ ನಿರ್ಮಿತ 🇮🇳",
+      description:
+        "ಗೌರವಯುತ ಹಿರಿಯರ ಆರೈಕೆಗೆ AI ಸಂಗಾತಿ. ಭಾರತದಲ್ಲಿ ಪ್ರೀತಿಯಿಂದ ನಿರ್ಮಿತ 🇮🇳",
       features: "ವೈಶಿಷ್ಟ್ಯಗಳು",
       support: "ಬೆಂಬಲ",
       emergency: "ತುರ್ತು",
       emergencyNumberLabel: "ರಾಷ್ಟ್ರೀಯ ತುರ್ತು ಸಂಖ್ಯೆ",
       emergencyButton: "🚨 ಈಗ SOS ಕರೆ",
-      rights: "© 2025 ತುಳಸಿರಕ್ಷ AI. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.",
+      rights:
+        "© 2025 ತುಳಸಿರಕ್ಷ AI. ಎಲ್ಲಾ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.",
       madeWith: "ಪ್ರೀತಿಯಿಂದ ನಿರ್ಮಿತ",
       forElders: "ಭಾರತೀಯ ಹಿರಿಯರಿಗಾಗಿ",
       featureVoice: "ವಾಯ್ಸ್ ಸಹಾಯಕ",
@@ -281,6 +406,7 @@ const DICTIONARY = {
       supportAccess: "ಪ್ರವೇಶಾತ್ಮಕತೆ",
     },
   },
+
   HI: {
     nav: {
       home: "होम",
@@ -292,22 +418,78 @@ const DICTIONARY = {
       logout: "लॉगआउट",
       loggingOut: "लॉगआउट हो रहा है...",
       login: "लॉगिन",
+      signup: "साइन अप",
+    },
+    landing: {
+      badge: "AI आधारित बुजुर्ग देखभाल साथी",
+      title: "तुलसीरक्षा AI",
+      subtitle1: "कभी अकेले नहीं।",
+      subtitle2: "हमेशा देखभाल के साथ।",
+      description:
+        "बुजुर्गों के लिए एक स्नेहपूर्ण और सरल देखभाल साथी। स्वास्थ्य निगरानी, आवाज़ मार्गदर्शन, और परिवार का साथ एक ही अनुभव में।",
+      getStarted: "शुरू करें",
+      voiceAssistant: "वॉइस असिस्टेंट",
+      youAreSafe: "आप सुरक्षित हैं ❤️",
+      monitoringActive: "निगरानी सक्रिय",
+      stopVoice: "आवाज़ बंद करें",
+      speaking: "तुलसी बोल रही है…",
+      voiceGuidance:
+        "तुलसीरक्षा AI में आपका स्वागत है, बुजुर्गों के लिए आपका व्यक्तिगत स्वास्थ्य साथी। शुरू करने के लिए, हरे शुरू करें बटन पर क्लिक करें। यह आपको लॉगिन पेज पर ले जाएगा। अगर आपका पहले से अकाउंट है, तो अपना ईमेल और पासवर्ड डालें और लॉगिन पर क्लिक करें। अगर आप नए हैं, तो पेज के ऊपर दाईं तरफ साइन अप पर क्लिक करें। अपना नाम, ईमेल और पासवर्ड डालकर अकाउंट बनाएं। लॉगिन होने के बाद, आपको अपना हेल्थ डैशबोर्ड दिखेगा जिसमें दवा रिमाइंडर, स्वास्थ्य ट्रैकिंग और परिवार कनेक्शन की सुविधाएं होंगी।",
+      featureVoiceTitle: "वॉइस असिस्टेंट",
+      featureVoiceDesc:
+        "रिमाइंडर और सुरक्षा के लिए परिचित भाषा में सरल आवाज़ मार्गदर्शन।",
+      featureHealthTitle: "स्वास्थ्य निगरानी",
+      featureHealthDesc:
+        "स्पष्ट अलर्ट और परिवार सूचनाओं के साथ लाइव स्वास्थ्य ट्रैकिंग।",
+      featureMedicineTitle: "दवा सहायता",
+      featureMedicineDesc:
+        "समझने में आसान चेक-इन के साथ समय पर रिमाइंडर।",
+      benefitsTitle: "बुजुर्गों के लिए लाभ",
+      benefit1: "बड़ा और पढ़ने में आसान इंटरफेस",
+      benefit2: "त्वरित मदद के लिए एक-टैप क्रियाएं",
+      benefit3: "शांत और भरोसेमंद डिज़ाइन",
+      familyTitle: "परिवार कनेक्शन",
+      familyDesc:
+        "परिवार के सदस्यों और देखभालकर्ताओं के साथ अपडेट साझा करें।",
+      familyLink: "परिवार सुविधाएं देखें",
     },
     page: {
       connecting: "हेल्थ सेंसर से कनेक्ट हो रहा है...",
       syncTitle: "डिवाइस में सिंक के लिए लॉगिन करें",
-      offlineText: "ऑफलाइन डेमो मोड चालू है। आप सुरक्षित हैं ❤️",
+      offlineText:
+        "ऑफलाइन डेमो मोड चालू है। आप सुरक्षित हैं ❤️",
       goLogin: "लॉगिन पर जाएँ",
     },
     hero: {
       badge: "AI आधारित बुजुर्ग देखभाल साथी",
       sub1: "कभी अकेले नहीं।",
       sub2: "हमेशा देखभाल के साथ।",
+      description:
+        "बुजुर्गों के लिए एक स्नेहपूर्ण और सरल देखभाल साथी। स्वास्थ्य निगरानी, आवाज़ मार्गदर्शन, और परिवार का साथ एक ही अनुभव में।",
       ctaPrimary: "फ्री शुरू करें",
-      ctaSecondary: "डेमो देखें",
+      ctaSecondary: "वॉइस असिस्टेंट",
       trustFamilies: "10,000+ परिवार हम पर भरोसा करते हैं",
       hipaa: "HIPAA कम्प्लायंट",
       madeInIndia: "भारत में निर्मित",
+      youAreSafe: "आप सुरक्षित हैं ❤️",
+      monitoringActive: "निगरानी सक्रिय",
+      featureVoiceTitle: "वॉइस असिस्टेंट",
+      featureVoiceDesc:
+        "रिमाइंडर और सुरक्षा के लिए परिचित भाषा में सरल आवाज़ मार्गदर्शन।",
+      featureHealthTitle: "स्वास्थ्य निगरानी",
+      featureHealthDesc:
+        "स्पष्ट अलर्ट और परिवार सूचनाओं के साथ लाइव स्वास्थ्य ट्रैकिंग।",
+      featureMedicineTitle: "दवा सहायता",
+      featureMedicineDesc:
+        "समझने में आसान चेक-इन के साथ समय पर रिमाइंडर।",
+      benefitsTitle: "बुजुर्गों के लिए लाभ",
+      benefit1: "बड़ा और पढ़ने में आसान इंटरफेस",
+      benefit2: "त्वरित मदद के लिए एक-टैप क्रियाएं",
+      benefit3: "शांत और भरोसेमंद डिज़ाइन",
+      familyTitle: "परिवार कनेक्शन",
+      familyDesc:
+        "परिवार के सदस्यों और देखभालकर्ताओं के साथ अपडेट साझा करें।",
+      familyLink: "परिवार सुविधाएं देखें",
     },
     dashboard: {
       title: "आपका डैशबोर्ड",
@@ -352,14 +534,16 @@ const DICTIONARY = {
       sos: "SOS अलर्ट",
       orderMeds: "दवा ऑर्डर",
       playBhajan: "भजन चलाएँ",
-      emergencySent: "🚨 इमरजेंसी अलर्ट परिवार को भेजा गया!",
+      emergencySent:
+        "🚨 इमरजेंसी अलर्ट परिवार को भेजा गया!",
     },
     health: {
       title: "हेल्थ वाइटल्स",
       lastUpdated: "अंतिम अपडेट",
       connecting: "हेल्थ सेंसर से कनेक्ट हो रहा है...",
       highRisk: "⚠️ उच्च जोखिम पाया गया",
-      sitRelax: "कृपया बैठकर आराम करें। परिवार को सूचना दी जा सकती है।",
+      sitRelax:
+        "कृपया बैठकर आराम करें। परिवार को सूचना दी जा सकती है।",
       liveStatus: "लाइव हेल्थ स्टेटस",
       risk: "जोखिम",
       status: "स्थिति: मॉनिटरिंग सक्रिय",
@@ -367,9 +551,11 @@ const DICTIONARY = {
       offline: "ऑफलाइन मोड",
       synced: "Supabase के साथ सिंक",
       sendUpdate: "परिवार को अपडेट भेजें",
-      updateLogged: "अपडेट कंसोल में लॉग हुआ (सिम्युलेटेड)।",
+      updateLogged:
+        "अपडेट कंसोल में लॉग हुआ (सिम्युलेटेड)।",
       alertPopup: "🔴 अलर्ट पॉपअप",
-      monitoringText: "कृपया बैठकर आराम करें। हम लगातार मॉनिटर कर रहे हैं।",
+      monitoringText:
+        "कृपया बैठकर आराम करें। हम लगातार मॉनिटर कर रहे हैं।",
       heartRate: "हार्ट रेट",
       dailySteps: "दैनिक कदम",
       sleep: "नींद",
@@ -388,15 +574,18 @@ const DICTIONARY = {
     mic: {
       label: "तुलसी से बात करें",
       listening: "सुन रहा है...",
-      guidance: "अब बोलें। तुलसी दवा, सुरक्षा और ग्रीटिंग कमांड समझेगी।",
-      noMic: "इस ब्राउज़र में माइक सपोर्ट नहीं है। नीचे बटन इस्तेमाल करें।",
+      guidance:
+        "अब बोलें। तुलसी दवा, सुरक्षा और ग्रीटिंग कमांड समझेगी।",
+      noMic:
+        "इस ब्राउज़र में माइक सपोर्ट नहीं है। नीचे बटन इस्तेमाल करें।",
       heard: "सुना गया:",
       medicineBtn: "💊 दवा रिमाइंडर",
       safetyBtn: "🛡️ सुरक्षा संदेश",
       greetingBtn: "👋 अभिवादन",
     },
     footer: {
-      description: "सम्मानजनक बुजुर्ग देखभाल के लिए AI साथी। भारत में प्यार से निर्मित 🇮🇳",
+      description:
+        "सम्मानजनक बुजुर्ग देखभाल के लिए AI साथी। भारत में प्यार से निर्मित 🇮🇳",
       features: "फीचर्स",
       support: "सहायता",
       emergency: "आपातकाल",
@@ -422,7 +611,12 @@ const DICTIONARY = {
 const I18nContext = createContext(null);
 
 function resolveValue(object, path) {
-  return path.split(".").reduce((acc, key) => (acc && key in acc ? acc[key] : null), object);
+  return path
+    .split(".")
+    .reduce(
+      (acc, key) => (acc && key in acc ? acc[key] : null),
+      object
+    );
 }
 
 export function I18nProvider({ children }) {
@@ -439,24 +633,25 @@ export function I18nProvider({ children }) {
   const value = useMemo(() => {
     const t = (key) => {
       const selected = DICTIONARY[language] || DICTIONARY.EN;
-      return resolveValue(selected, key) || resolveValue(DICTIONARY.EN, key) || key;
+      return (
+        resolveValue(selected, key) ||
+        resolveValue(DICTIONARY.EN, key) ||
+        key
+      );
     };
 
-    return {
-      language,
-      setLanguage,
-      languages: LANGUAGE_OPTIONS,
-      t,
-    };
+    return { language, setLanguage, languages: LANGUAGE_OPTIONS, t };
   }, [language]);
 
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+  return (
+    <I18nContext.Provider value={value}>
+      {children}
+    </I18nContext.Provider>
+  );
 }
 
 export function useI18n() {
   const ctx = useContext(I18nContext);
-  if (!ctx) {
-    throw new Error("useI18n must be used inside I18nProvider");
-  }
+  if (!ctx) throw new Error("useI18n must be used inside I18nProvider");
   return ctx;
 }
