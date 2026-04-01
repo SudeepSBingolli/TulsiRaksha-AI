@@ -2,6 +2,145 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+const RESPONSE_BOOK = {
+  "en-US": {
+    greeting: [
+      "Hello! I am Tulsi. I am with you.",
+      "Good to hear your voice. How can I help right now?",
+    ],
+    medicine: [
+      "Please take your medicine with a glass of water. You are doing great.",
+      "Medicine time reminder: take your tablet slowly and safely.",
+    ],
+    help: [
+      "I am here with you. Please stay calm. Would you like me to guide you to call family?",
+      "You are not alone. Take a deep breath. I can help you contact support.",
+    ],
+    water: [
+      "Please drink water now. Small sips are perfectly fine.",
+      "Hydration check: please drink one glass of water.",
+    ],
+    sleep: [
+      "Please rest for some time. Good sleep helps your heart and mind.",
+      "Try to relax and rest. I can remind you again in a little while.",
+    ],
+    food: [
+      "Please have a light healthy meal. Eating on time helps your strength.",
+      "Nutritious food is important. Please do not skip your meal.",
+    ],
+    health: [
+      "Please check your blood pressure or sugar if possible. I am monitoring with you.",
+      "Thank you for checking your health. Tell me if you feel discomfort.",
+    ],
+    family: [
+      "Your family cares for you deeply. Shall I help you call them?",
+      "You can connect with your family now. Staying connected is comforting.",
+    ],
+    pain: [
+      "I am sorry you are uncomfortable. Please sit down and breathe slowly.",
+      "Please take rest. If pain continues, we should contact family or doctor.",
+    ],
+    fallback: [
+      "I am listening. Please speak slowly and clearly, for example: medicine, help, or call family.",
+      "I am here for your safety. You can say: medicine reminder, I need help, or call family.",
+    ],
+  },
+  "kn-IN": {
+    greeting: [
+      "ನಮಸ್ಕಾರ, ನಾನು ತುಳಸಿ. ನಾನು ನಿಮ್ಮ ಜೊತೆ ಇದ್ದೇನೆ.",
+      "ನಿಮ್ಮ ಧ್ವನಿ ಕೇಳಿ ಸಂತೋಷವಾಗಿದೆ. ನಿಮಗೆ ಏನು ಸಹಾಯ ಬೇಕು?",
+    ],
+    medicine: [
+      "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಔಷಧವನ್ನು ನೀರಿನೊಂದಿಗೆ ತೆಗೆದುಕೊಳ್ಳಿ.",
+      "ಔಷಧ ಸಮಯವಾಗಿದೆ. ನಿಧಾನವಾಗಿ ತೆಗೆದುಕೊಳ್ಳಿ.",
+    ],
+    help: [
+      "ನಾನು ನಿಮ್ಮ ಜೊತೆ ಇದ್ದೇನೆ. ದಯವಿಟ್ಟು ಶಾಂತವಾಗಿರಿ. ಕುಟುಂಬಕ್ಕೆ ಕರೆ ಮಾಡಬೇಕೇ?",
+      "ನೀವು ಒಬ್ಬರೇ ಇಲ್ಲ. ಆಳವಾಗಿ ಉಸಿರಾಡಿ. ನಾನು ಸಹಾಯ ಮಾಡುತ್ತೇನೆ.",
+    ],
+    water: [
+      "ದಯವಿಟ್ಟು ಈಗ ಒಂದು ಗ್ಲಾಸ್ ನೀರು ಕುಡಿಯಿರಿ.",
+      "ಜಲಯುಕ್ತವಾಗಿರಿ. ಚಿಕ್ಕ ಸಿಪ್‌ಗಳಲ್ಲಿ ನೀರು ಕುಡಿಯಿರಿ.",
+    ],
+    sleep: [
+      "ಸ್ವಲ್ಪ ವಿಶ್ರಾಂತಿ ಮಾಡಿ. ಒಳ್ಳೆಯ ನಿದ್ರೆ ಆರೋಗ್ಯಕ್ಕೆ ಮುಖ್ಯ.",
+      "ದಯವಿಟ್ಟು ನೆಮ್ಮದಿಯಾಗಿ ಮಲಗಿ. ಬೇಕಾದರೆ ಮತ್ತೆ ಜ್ಞಾಪನೆ ಕೊಡುತ್ತೇನೆ.",
+    ],
+    food: [
+      "ಸಮಯಕ್ಕೆ ಊಟ ಮಾಡಿ. ಪೋಷಕಾಂಶಯುತ ಆಹಾರ ತಿನ್ನಿ.",
+      "ಹಲ್ಕಾ ಆರೋಗ್ಯಕರ ಆಹಾರ ತೆಗೆದುಕೊಳ್ಳಿ.",
+    ],
+    health: [
+      "ಸಾಧ್ಯವಿದ್ದರೆ BP ಅಥವಾ sugar ಪರಿಶೀಲಿಸಿ.",
+      "ಆರೋಗ್ಯ ಪರೀಕ್ಷೆ ಚೆನ್ನಾಗಿದೆ. ಅಸ್ವಸ್ಥ ಅನ್ನಿಸಿದರೆ ತಕ್ಷಣ ಹೇಳಿ.",
+    ],
+    family: [
+      "ನಿಮ್ಮ ಕುಟುಂಬ ನಿಮ್ಮ ಬಗ್ಗೆ ಕಾಳಜಿ ಇಟ್ಟುಕೊಂಡಿದೆ. ಅವರಿಗೆ ಕರೆ ಮಾಡೋಣವೇ?",
+      "ಕುಟುಂಬದವರ ಜೊತೆ ಮಾತನಾಡಿದರೆ ನಿಮಗೆ ನೆಮ್ಮದಿ ಸಿಗುತ್ತದೆ.",
+    ],
+    pain: [
+      "ಕ್ಷಮಿಸಿ. ನೀವು ಕುಳಿತು ವಿಶ್ರಾಂತಿ ಮಾಡಿ ಮತ್ತು ನಿಧಾನವಾಗಿ ಉಸಿರಾಡಿ.",
+      "ನೋವು ಮುಂದುವರೆದರೆ ಕುಟುಂಬ ಅಥವಾ ವೈದ್ಯರಿಗೆ ತಿಳಿಸೋಣ.",
+    ],
+    fallback: [
+      "ನಾನು ಕೇಳುತ್ತಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ನಿಧಾನವಾಗಿ ಮಾತನಾಡಿ. ಉದಾಹರಣೆ: ಔಷಧ, ಸಹಾಯ, ಕುಟುಂಬಕ್ಕೆ ಕರೆ.",
+      "ನಿಮ್ಮ ಸುರಕ್ಷತೆ ನನ್ನ ಮುಖ್ಯತೆ. ಔಷಧ ಜ್ಞಾಪನೆ ಅಥವಾ ಸಹಾಯ ಎಂದೂ ಹೇಳಬಹುದು.",
+    ],
+  },
+  "hi-IN": {
+    greeting: [
+      "नमस्ते, मैं तुलसी हूँ। मैं आपके साथ हूँ।",
+      "आपकी आवाज़ सुनकर अच्छा लगा। मैं कैसे मदद करूँ?",
+    ],
+    medicine: [
+      "कृपया अपनी दवा पानी के साथ लें।",
+      "दवा का समय हो गया है। आराम से दवा लें।",
+    ],
+    help: [
+      "मैं आपके साथ हूँ। कृपया शांत रहें। क्या परिवार को कॉल करें?",
+      "आप अकेले नहीं हैं। गहरी सांस लें। मैं मदद करूँगी।",
+    ],
+    water: [
+      "कृपया अभी एक गिलास पानी पिएँ।",
+      "हाइड्रेट रहना ज़रूरी है। धीरे-धीरे पानी पिएँ।",
+    ],
+    sleep: [
+      "कृपया थोड़ा आराम करें। अच्छी नींद से स्वास्थ्य बेहतर रहता है।",
+      "आराम कीजिए। चाहें तो मैं थोड़ी देर बाद फिर याद दिलाऊँगी।",
+    ],
+    food: [
+      "कृपया समय पर हल्का और पौष्टिक भोजन लें।",
+      "खाना न छोड़ें। नियमित भोजन आपके लिए अच्छा है।",
+    ],
+    health: [
+      "संभव हो तो BP या शुगर जाँच लें।",
+      "स्वास्थ्य जाँच अच्छी आदत है। असुविधा हो तो तुरंत बताइए।",
+    ],
+    family: [
+      "आपका परिवार आपकी बहुत परवाह करता है। क्या उन्हें कॉल करें?",
+      "परिवार से बात करने से मन हल्का होता है।",
+    ],
+    pain: [
+      "मुझे दुख है कि आपको तकलीफ है। कृपया बैठकर आराम करें।",
+      "यदि दर्द जारी रहे तो परिवार या डॉक्टर से संपर्क करें।",
+    ],
+    fallback: [
+      "मैं सुन रही हूँ। धीरे और साफ बोलिए: दवा, मदद, या परिवार को कॉल।",
+      "आप सुरक्षित हैं। आप कह सकते हैं: दवा याद दिलाओ, मदद चाहिए, परिवार को कॉल।",
+    ],
+  },
+};
+
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function detectTextLanguage(text, fallbackLang) {
+  if (/[\u0C80-\u0CFF]/.test(text)) return "kn-IN";
+  if (/[\u0900-\u097F]/.test(text)) return "hi-IN";
+  return fallbackLang;
+}
+
 export default function MicButton() {
   const [preferredLang] = useState(() => {
     if (typeof window === "undefined") return "kn-IN";
@@ -114,94 +253,41 @@ export default function MicButton() {
     [getVoiceForLang, preferredLang]
   );
 
-  const handleCommand = useCallback(
+  const getReply = useCallback(
     (text) => {
       const normalized = text.toLowerCase();
+      const lang = detectTextLanguage(text, preferredLang);
+      const book = RESPONSE_BOOK[lang] || RESPONSE_BOOK["en-US"];
 
-      if (normalized.includes("medicine") || text.includes("ಔಷಧ") || text.includes("दवा")) {
-        let response = "Please take your medicine with water";
-        let lang = "en-US";
-        if (text.includes("ಔಷಧ")) {
-          response = "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಔಷಧ ಮತ್ತು ನೀರಿನೊಂದಿಗೆ ತೆಗೆದುಕೊಳ್ಳಿ";
-          lang = "kn-IN";
-        } else if (text.includes("दवा")) {
-          response = "कृपया पानी के साथ अपनी दवा लें";
-          lang = "hi-IN";
-        }
-        setResponseText(response);
-        speak(response, lang);
-        return;
-      }
+      const intents = {
+        medicine: ["medicine", "tablet", "pill", "ಔಷಧ", "दवा"],
+        help: ["help", "emergency", "danger", "sos", "ಸಹಾಯ", "मदद", "इमरजेंसी"],
+        greeting: ["hello", "hi", "good morning", "good afternoon", "good evening", "ನಮಸ್ಕಾರ", "नमस्ते"],
+        water: ["water", "drink", "thirsty", "ನೀರು", "पानी"],
+        health: ["blood pressure", "bp", "sugar", "temperature", "health", "ಆರೋಗ್ಯ", "स्वास्थ्य"],
+        sleep: ["sleep", "rest", "tired", "sleepy", "ನಿದ್ರೆ", "नींद"],
+        food: ["food", "eat", "meal", "hungry", "ಊಟ", "खाना", "भोजन"],
+        family: ["family", "call", "alone", "lonesome", "ಕುಟುಂಬ", "परिवार"],
+        pain: ["pain", "hurt", "problem", "ನೋವು", "दर्द", "तकलीफ"],
+      };
 
-      if (normalized.includes("help") || normalized.includes("emergency") || normalized.includes("danger") || text.includes("ಸಹಾಯ") || text.includes("मदद")) {
-        let response = "I am here for you. I will help. Stay calm.";
-        let lang = "en-US";
-        if (text.includes("ಸಹಾಯ")) {
-          response = "ನಾನು ನಿನ್ನ ಸಂಗಯಲ್ಲಿ ಇದ್ದೇನೆ. ವಿಚಾರವಿಲ್ಲ, ನಾವು ಹೋಗುತ್ತೇವೆ.";
-          lang = "kn-IN";
-        } else if (text.includes("मदद")) {
-          response = "मैं आपके साथ हूँ। चिंता मत करो। सब ठीक है।";
-          lang = "hi-IN";
-        }
-        setResponseText(response);
-        speak(response, lang);
-        return;
-      }
+      const intent = Object.keys(intents).find((key) =>
+        intents[key].some((word) => normalized.includes(word))
+      );
 
-      if (normalized.includes("hello") || normalized.includes("hi") || normalized.includes("how are you") || normalized.includes("good morning") || normalized.includes("good afternoon")) {
-        const response = "Hello! I am Tulsi, your health assistant. I am here to help you stay healthy and happy.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("water") || normalized.includes("drink") || normalized.includes("thirsty")) {
-        const response = "Please drink a glass of water. It is important to stay hydrated. Your health is my priority.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("blood pressure") || normalized.includes("sugar") || normalized.includes("temperature") || normalized.includes("health")) {
-        const response = "Please check your health regularly. If you feel unwell, let me know immediately. Your well-being matters.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("sleep") || normalized.includes("rest") || normalized.includes("tired") || normalized.includes("sleepy")) {
-        const response = "Please get some rest. Good sleep is important for your health. Sleep well!";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("food") || normalized.includes("eat") || normalized.includes("meal") || normalized.includes("hungry")) {
-        const response = "Please have a healthy meal. Eat nutritious food like fruits, vegetables, and plenty of water. Eat on time.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("family") || normalized.includes("call") || normalized.includes("lonesome") || normalized.includes("alone")) {
-        const response = "You can call your family members. Do not hesitate to reach out. They care about you.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      if (normalized.includes("pain") || normalized.includes("hurt") || normalized.includes("problem")) {
-        const response = "If you have any pain or problem, please tell me. We can get proper help for you.";
-        setResponseText(response);
-        speak(response, "en-US");
-        return;
-      }
-
-      const response = "I am listening. Please speak slowly and clearly. I am here to help you with your health and wellness.";
-      setResponseText(response);
-      speak(response, "en-US");
+      const category = intent || "fallback";
+      return { text: pickRandom(book[category]), lang };
     },
-    [speak]
+    [preferredLang]
+  );
+
+  const handleCommand = useCallback(
+    (text) => {
+      const reply = getReply(text);
+      setResponseText(reply.text);
+      speak(reply.text, reply.lang);
+    },
+    [getReply, speak]
   );
 
   useEffect(() => {
@@ -229,7 +315,12 @@ export default function MicButton() {
     };
 
     recognition.onerror = (event) => {
-      setMicError(`Microphone error: ${event.error}`);
+      const knownErrors = {
+        "not-allowed": "Microphone access is blocked. Please allow microphone permission.",
+        "audio-capture": "No microphone detected. Please check your device microphone.",
+        "network": "Network issue while listening. Please try again.",
+      };
+      setMicError(knownErrors[event.error] || `Microphone error: ${event.error}`);
     };
 
     recognition.onend = () => {
@@ -259,7 +350,12 @@ export default function MicButton() {
       window.speechSynthesis?.resume();
       setIsListening(true);
       recognitionRef.current.start();
-      speak("ತುಳಸಿ ಕೇಳುತ್ತಿದೆ. ದಯವಿಟ್ಟು ಮಾತನಾಡಿ.", "kn-IN");
+      const startPrompts = {
+        "en-US": "Tulsi is listening. Please speak.",
+        "kn-IN": "ತುಳಸಿ ಕೇಳುತ್ತಿದೆ. ದಯವಿಟ್ಟು ಮಾತನಾಡಿ.",
+        "hi-IN": "तुलसी सुन रही है। कृपया बोलिए।",
+      };
+      speak(startPrompts[preferredLang] || startPrompts["en-US"], preferredLang);
     } catch (err) {
       console.warn("Mic start error:", err);
       setMicError("Unable to start microphone. Please allow microphone access.");
@@ -376,11 +472,11 @@ export default function MicButton() {
               </div>
 
               <p className="text-center text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-                Listening...
+                {isListening ? "Listening..." : "Tap mic to continue"}
               </p>
               <p className="text-center text-sm sm:text-base text-gray-400">
                 {isMicSupported
-                  ? "Speak now. Kannada, Hindi, and English commands are supported."
+                  ? "Speak now. Kannada, Hindi, and English are supported with friendly guidance."
                   : "Microphone not supported. Use quick command buttons below."}
               </p>
 
@@ -425,6 +521,24 @@ export default function MicButton() {
                 <button
                   onClick={() => {
                     recognitionRef.current?.stop();
+                    handleCommand("water");
+                    setTimeout(() => {
+                      if (recognitionRef.current) {
+                        try {
+                          recognitionRef.current.start();
+                        } catch (e) {
+                          console.warn("Restart recognition error:", e);
+                        }
+                      }
+                    }, 800);
+                  }}
+                  className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
+                >
+                  💧 Water
+                </button>
+                <button
+                  onClick={() => {
+                    recognitionRef.current?.stop();
                     handleCommand("help");
                     setTimeout(() => {
                       if (recognitionRef.current) {
@@ -457,6 +571,24 @@ export default function MicButton() {
                   className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
                 >
                   👋 Greeting
+                </button>
+                <button
+                  onClick={() => {
+                    recognitionRef.current?.stop();
+                    handleCommand("call family");
+                    setTimeout(() => {
+                      if (recognitionRef.current) {
+                        try {
+                          recognitionRef.current.start();
+                        } catch (e) {
+                          console.warn("Restart recognition error:", e);
+                        }
+                      }
+                    }, 800);
+                  }}
+                  className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
+                >
+                  📞 Family
                 </button>
                 <button
                   onClick={() => speak("Can you hear me now?", "en-US")}

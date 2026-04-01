@@ -1,11 +1,18 @@
 @import "tailwindcss";
 
+:root {
+  --brand-emerald: #10b981;
+  --bg-cream: #f9faf5;
+  --text-strong: #1f2937;
+  --text-soft: #4b5563;
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Nunito", "Segoe UI", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Custom scrollbar */
@@ -28,8 +35,22 @@ html {
 
 /* Elder-friendly base font size */
 body {
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-strong);
+  background: radial-gradient(
+      circle at 8% 12%,
+      rgba(16, 185, 129, 0.1) 0,
+      rgba(249, 250, 245, 0.8) 30%,
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at 92% 5%,
+      rgba(16, 185, 129, 0.08) 0,
+      rgba(249, 250, 245, 0.84) 36%,
+      transparent 64%
+    ),
+    var(--bg-cream);
 }
 
 @media (min-width: 640px) {
@@ -97,4 +118,17 @@ a,
 
 .fade-in-up {
   animation: fadeInUp 420ms ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 500ms ease forwards;
 }
