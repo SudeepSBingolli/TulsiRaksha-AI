@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
-export default function SetupCredentialsPage() {
+function SetupCredentialsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email");
@@ -319,5 +319,13 @@ export default function SetupCredentialsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SetupCredentialsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center"><p className="text-gray-600">Loading...</p></div>}>
+      <SetupCredentialsContent />
+    </Suspense>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export default function VerifyPhonePage() {
+function VerifyPhoneContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const phone = searchParams.get("phone");
@@ -148,5 +148,14 @@ export default function VerifyPhonePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function VerifyPhonePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 flex items-center justify-center"><p className="text-gray-600">Loading...</p></div>}>
+      <VerifyPhoneContent />
+    </Suspense>
   );
 }
