@@ -1,7 +1,11 @@
 "use client";
 
-export default function QuickActions() {
-  const actions = [
+import { useCallback, useEffect, useMemo, useRef } from "react";
+
+export default function QuickActions({ demoActive = false, autoTriggerSos = false }) {
+  const hasAutoTriggered = useRef(false);
+
+  const actions = useMemo(() => [
     {
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -21,6 +25,7 @@ export default function QuickActions() {
       label: "SOS Alert",
       emoji: "🚨",
       color: "bg-red-50 hover:bg-red-100 text-red-600 border-red-100",
+      isSos: true,
     },
     {
       icon: (
@@ -44,10 +49,37 @@ export default function QuickActions() {
       color:
         "bg-orange-50 hover:bg-orange-100 text-orange-600 border-orange-100",
     },
-  ];
+  ], []);
+
+  const handleActionClick = useCallback((action) => {
+    if (action.isSos) {
+      alert("🚨 Emergency Alert Sent to Family!");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!autoTriggerSos) {
+      hasAutoTriggered.current = false;
+      return;
+    }
+
+    if (hasAutoTriggered.current) return;
+
+    const sosAction = actions.find((action) => action.isSos);
+    if (sosAction) {
+      hasAutoTriggered.current = true;
+      handleActionClick(sosAction);
+    }
+  }, [autoTriggerSos, actions, handleActionClick]);
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 p-6 sm:p-7 shadow-sm">
+    <div
+      className={`bg-white rounded-3xl border p-6 sm:p-7 shadow-sm transition-all duration-500 ${
+        demoActive
+          ? "border-red-300 ring-4 ring-red-100 scale-[1.01]"
+          : "border-gray-100"
+      }`}
+    >
       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-5">
         Quick Actions
       </h3>
@@ -56,7 +88,10 @@ export default function QuickActions() {
         {actions.map((action, idx) => (
           <button
             key={idx}
-            className={`flex flex-col items-center gap-2.5 p-4 sm:p-5 rounded-2xl border transition-all duration-300 ${action.color} group`}
+            onClick={() => handleActionClick(action)}
+            className={`flex flex-col items-center gap-2.5 p-4 sm:p-5 rounded-2xl border transition-all duration-300 ${action.color} group ${
+              demoActive && action.isSos ? "ring-2 ring-red-300" : ""
+            }`}
           >
             <div className="w-12 h-12 rounded-2xl bg-white/80 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
               <span className="text-xl">{action.emoji}</span>

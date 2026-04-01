@@ -46,6 +46,62 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 - `public/` - Static assets
 - `package.json` - Project dependencies and scripts
 
+## WhatsApp Tracking and Alerts
+
+This project includes a WhatsApp reporting flow for elder-care status updates.
+
+### API Route
+
+- Endpoint: `POST /api/send-whatsapp-report`
+- File: `app/api/send-whatsapp-report/route.js`
+- Behavior:
+	- Collects user name, heart rate, risk level, checklist summary, and live location
+	- Formats a readable WhatsApp message
+	- Sends to caregiver via Twilio WhatsApp API
+
+### Environment Variables
+
+Create `.env.local` using values from `.env.example`:
+
+```bash
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+CAREGIVER_WHATSAPP_TO=whatsapp:+919999999999
+```
+
+### Frontend Trigger
+
+- Button: `Send Update to Family` in `app/components/HealthMetrics.jsx`
+- On click: Calls `/api/send-whatsapp-report`
+- Auto-trigger: When risk becomes `HIGH`, a WhatsApp alert is automatically sent once for that high-risk window
+
+### Supabase Tables (for demo)
+
+Create these tables in Supabase SQL editor:
+
+```sql
+create table if not exists public.health_data (
+	id bigint generated always as identity primary key,
+	user_id uuid,
+	heart_rate int not null,
+	risk text not null,
+	source text,
+	created_at timestamptz default now()
+);
+
+create table if not exists public.checklist_items (
+	id bigint generated always as identity primary key,
+	user_id uuid not null,
+	item_key text not null,
+	checked boolean default false,
+	updated_at timestamptz default now(),
+	unique (user_id, item_key)
+);
+```
+
+If table access fails, the app automatically falls back to offline mode using local state.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

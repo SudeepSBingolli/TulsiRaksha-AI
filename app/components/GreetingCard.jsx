@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function GreetingCard() {
+export default function GreetingCard({ demoActive = false, userName = "Appa" }) {
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
 
@@ -38,7 +38,13 @@ export default function GreetingCard() {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-3xl p-7 sm:p-8 text-white overflow-hidden shadow-xl shadow-emerald-200/40">
+    <div
+      className={`relative bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-3xl p-7 sm:p-8 text-white overflow-hidden shadow-xl transition-all duration-500 ${
+        demoActive
+          ? "ring-4 ring-emerald-200 scale-[1.01] shadow-2xl shadow-emerald-300/60"
+          : "shadow-emerald-200/40"
+      }`}
+    >
       {/* Decorative background shapes */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10" />
@@ -61,9 +67,7 @@ export default function GreetingCard() {
             {getGreeting()},
           </h2>
         </div>
-        <h3 className="text-2xl sm:text-3xl font-bold mb-1">
-          Appa 👋
-        </h3>
+        <h3 className="text-2xl sm:text-3xl font-bold mb-1">{userName} 👋</h3>
         <p className="text-emerald-100 text-base sm:text-lg font-light mt-3">
           ನಮಸ್ಕಾರ ಅಪ್ಪ — You&apos;re doing great today!
         </p>

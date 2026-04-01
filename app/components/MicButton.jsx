@@ -3,15 +3,12 @@
 import { useState, useEffect } from "react";
 
 export default function MicButton() {
-  const [waveHeights, setWaveHeights] = useState([]);
+  const [waveHeights] = useState(() =>
+    Array.from({ length: 7 }, () => 16 + Math.random() * 32)
+  );
   const [isListening, setIsListening] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
   const [pulseScale, setPulseScale] = useState(1);
-
-  useEffect(() => {
-    const heights = Array.from({ length: 7 }, () => 16 + Math.random() * 32);
-    setWaveHeights(heights);
-  }, []);
 
   useEffect(() => {
     if (!isListening) return;
@@ -21,11 +18,36 @@ export default function MicButton() {
     return () => clearInterval(interval);
   }, [isListening]);
 
+  const speak = (text) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 0.92;
+    msg.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(msg);
+  };
+
+  const runVoiceAction = (type) => {
+    if (type === "medicine") {
+      speak("Medicine reminder. Please take your tablet with water.");
+      return;
+    }
+
+    if (type === "safety") {
+      speak("You are safe. Please sit down and relax.");
+      return;
+    }
+
+    speak("Good Afternoon Appa. You are doing great today.");
+  };
+
   const handleMicClick = () => {
     if (!isListening) {
+      speak("Voice assistant started");
       setShowPanel(true);
       setTimeout(() => setIsListening(true), 100);
     } else {
+      speak("Voice assistant stopped");
       setIsListening(false);
       setTimeout(() => setShowPanel(false), 300);
     }
@@ -130,21 +152,29 @@ export default function MicButton() {
                 Listening...
               </p>
               <p className="text-center text-sm sm:text-base text-gray-400">
-                Try saying: &quot;Tulsi, remind me to take medicine at 3 PM&quot;
+                Voice-first assistant for elder care support
               </p>
 
               {/* Quick voice commands */}
               <div className="flex flex-wrap justify-center gap-2 mt-5">
-                {["💊 Medicine", "📞 Call Priya", "🎵 Play music"].map(
-                  (cmd, i) => (
-                    <button
-                      key={i}
-                      className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
-                    >
-                      {cmd}
-                    </button>
-                  )
-                )}
+                <button
+                  onClick={() => runVoiceAction("medicine")}
+                  className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
+                >
+                  💊 Medicine Reminder
+                </button>
+                <button
+                  onClick={() => runVoiceAction("safety")}
+                  className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
+                >
+                  🛡️ Safety Message
+                </button>
+                <button
+                  onClick={() => runVoiceAction("greeting")}
+                  className="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-medium text-gray-600 transition-colors border border-gray-100"
+                >
+                  👋 Greeting
+                </button>
               </div>
             </div>
           </div>

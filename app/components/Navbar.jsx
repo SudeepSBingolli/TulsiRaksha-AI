@@ -1,11 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-export default function Navbar() {
+export default function Navbar({
+  session = null,
+  userName = "Appa",
+  userEmail = "",
+  onLogout,
+  isLoggingOut = false,
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("EN");
   const [activeLink, setActiveLink] = useState("Home");
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const navLinks = ["Home", "Reminders", "Health", "Family", "Settings"];
   const languages = ["EN", "ಕನ್ನಡ", "हिन्दी"];
@@ -69,10 +77,55 @@ export default function Navbar() {
               <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-400 rounded-full border-2 border-white" />
             </button>
 
-            {/* Profile Avatar */}
-            <button className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-200/40 hover:shadow-emerald-200/60 transition-shadow">
-              <span className="text-white font-bold text-sm sm:text-base">A</span>
-            </button>
+            {/* Profile / Auth */}
+            {session ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowProfileMenu((prev) => !prev)}
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-200/40 hover:shadow-emerald-200/60 transition-shadow"
+                >
+                  <span className="text-white font-bold text-sm sm:text-base">
+                    {String(userName).charAt(0).toUpperCase()}
+                  </span>
+                </button>
+
+                {showProfileMenu && (
+                  <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-emerald-100 bg-white shadow-xl p-3 z-50">
+                    <p className="text-sm font-bold text-gray-900">{userName}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 break-all">{userEmail}</p>
+
+                    <div className="mt-3 space-y-2">
+                      <Link
+                        href="/login"
+                        className="block w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        onClick={() => setShowProfileMenu(false)}
+                      >
+                        Profile Settings
+                      </Link>
+                      <button
+                        onClick={async () => {
+                          setShowProfileMenu(false);
+                          if (onLogout) {
+                            await onLogout();
+                          }
+                        }}
+                        disabled={isLoggingOut}
+                        className="w-full rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60"
+                      >
+                        {isLoggingOut ? "Logging out..." : "Logout"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold"
+              >
+                Login
+              </Link>
+            )}
 
             {/* Mobile Menu Button */}
             <button
