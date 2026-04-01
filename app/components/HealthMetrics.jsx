@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { getRiskFromML } from "@/lib/getRiskFromML";
 import { useI18n } from "@/app/i18n";
@@ -285,7 +285,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       : "text-emerald-700";
   const demoHighlight = demoStep === "heart" || demoStep === "alert";
 
-  const buildWhatsAppMessage = () => [
+  const whatsAppMessage = useMemo(() => [
     `Hello, this is an automated health update for ${userName}.`,
     `Heart Rate: ${heartRate} BPM`,
     `Steps: ${steps}`,
@@ -294,7 +294,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
     `Status: ${riskLevel === "HIGH" ? "High Risk" : riskLevel === "LOW" ? "Normal" : "Monitoring Active"}`,
     `Risk Level: ${riskLevel}`,
     "Please check on them if needed.",
-  ].join("\n");
+  ].join("\n"), [heartRate, medicine, riskLevel, sleep, steps, userName]);
 
   const normalizePhoneNumber = (phone) => {
     const digits = String(phone || "").replace(/[^\d]/g, "");
@@ -313,7 +313,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
         throw new Error("WhatsApp can only be opened in a browser.");
       }
 
-      const message = buildWhatsAppMessage();
+      const message = whatsAppMessage;
       const whatsappUrl = `https://wa.me/${recipientPhone}?text=${encodeURIComponent(message)}`;
 
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -321,7 +321,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
     } catch (error) {
       setSendMessage(error?.message || "Unable to open WhatsApp right now.");
     }
-  }, [familyPhone, heartRate, medicine, riskLevel, sleep, steps, userName]);
+  }, [familyPhone, whatsAppMessage]);
 
   useEffect(() => {
     const shouldAutoOpen = riskLevel === "HIGH" && familyPhone && !autoOpenedWhatsApp.current;
@@ -337,7 +337,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       const recipientPhone = normalizePhoneNumber(familyPhone);
       if (!recipientPhone || typeof window === "undefined") return;
 
-      const message = buildWhatsAppMessage();
+      const message = whatsAppMessage;
       const whatsappUrl = `https://wa.me/${recipientPhone}?text=${encodeURIComponent(message)}`;
 
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -346,7 +346,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [familyPhone, heartRate, medicine, riskLevel, sleep, steps, userName]);
+  }, [familyPhone, riskLevel, whatsAppMessage]);
 
   useEffect(() => {
     if (riskLevel === "HIGH") {

@@ -12,15 +12,15 @@ export default function LandingView() {
   const exploreOptions = [
     {
       icon: "🎙️",
-      title: "Features",
-      desc: "Explore all powerful features",
-      href: "/features",
+      title: "AI Assistant",
+      desc: "Talk to your AI health companion",
+      href: "/assistant",
     },
     {
       icon: "❤️",
-      title: "Benefits",
-      desc: "Why choose TulsiRaksha",
-      href: "/benefits",
+      title: "Health Monitor",
+      desc: "Track your vitals in real-time",
+      href: "/health",
     },
     {
       icon: "👨‍👩‍👧",
@@ -52,7 +52,7 @@ export default function LandingView() {
               Explore More
             </h2>
             <p className="text-gray-600 text-lg">
-              Learn more about TulsiRaksha and find what's right for you
+              Learn more about TulsiRaksha and find what&apos;s right for you
             </p>
           </div>
 
