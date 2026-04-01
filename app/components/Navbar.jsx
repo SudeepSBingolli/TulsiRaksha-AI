@@ -44,6 +44,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("nav.home"), path: "/" },
+    { label: "AI Assistant", path: "/assistant" },
     { label: t("nav.reminders"), path: "/reminders" },
     { label: t("nav.health"), path: "/health" },
     { label: t("nav.family"), path: "/family" },
@@ -133,6 +134,13 @@ export default function Navbar() {
                       {userEmail}
                     </p>
                     <div className="mt-4 space-y-2">
+                      <Link
+                        href="/assistant"
+                        className="block w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        AI Assistant
+                      </Link>
                       <Link
                         href="/profile"
                         className="block w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"

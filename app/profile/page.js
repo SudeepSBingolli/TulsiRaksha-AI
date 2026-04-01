@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/Navbar";
+import ElderCareAssistant from "@/app/components/ElderCareAssistant";
 import { supabase } from "@/lib/supabaseClient";
 
 function InfoRow({ label, value }) {
@@ -237,7 +238,7 @@ export default function ProfilePage() {
         <section className="bg-white border border-emerald-100 rounded-3xl shadow-sm p-6 sm:p-8 mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Your Profile</h1>
           <p className="text-gray-600 mt-2">Logged in as {userEmail}</p>
-          <div className="mt-5">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             <button
               onClick={handleSave}
               disabled={saving}
@@ -245,6 +246,12 @@ export default function ProfilePage() {
             >
               {saving ? "Saving..." : "Update Profile"}
             </button>
+            <a
+              href="#ai-assistant"
+              className="rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-5 py-2.5 transition"
+            >
+              Open AI Assistant
+            </a>
           </div>
           {error && (
             <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
@@ -257,6 +264,10 @@ export default function ProfilePage() {
             </div>
           )}
         </section>
+
+        <div id="ai-assistant">
+          <ElderCareAssistant userName={fullName || userEmail?.split("@")[0] || "Appa"} />
+        </div>
 
         <section className="mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Basic Profile</h2>

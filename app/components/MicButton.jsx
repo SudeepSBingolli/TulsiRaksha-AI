@@ -160,6 +160,11 @@ export default function MicButton() {
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
   const [micError, setMicError] = useState("");
+  const [recognitionLang, setRecognitionLang] = useState(preferredLang);
+  const [showRetry, setShowRetry] = useState(false);
+  const [offlineVoiceMode, setOfflineVoiceMode] = useState(false);
+  const [networkErrorCount, setNetworkErrorCount] = useState(0);
+  const [typedCommand, setTypedCommand] = useState("");
   const [isMicSupported] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -303,7 +308,7 @@ export default function MicButton() {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = preferredLang;
+    recognition.lang = recognitionLang;
 
     recognition.onresult = (event) => {
       const latest = event.results[event.results.length - 1];
@@ -320,6 +325,32 @@ export default function MicButton() {
         "audio-capture": "No microphone detected. Please check your device microphone.",
         "network": "Network issue while listening. Please try again.",
       };
+
+      if (event.error === "network") {
+        const nextCount = networkErrorCount + 1;
+        setNetworkErrorCount(nextCount);
+        setShowRetry(true);
+
+        if (nextCount >= 2) {
+          setOfflineVoiceMode(true);
+          setIsListening(false);
+          setMicError(
+            "Speech network is unavailable on this browser. Offline Voice Mode is active — use quick buttons or type a command below."
+          );
+          return;
+        }
+
+        // Fallback to a stable recognition language after network failures
+        // while preserving multilingual voice replies.
+        if (recognitionLang !== "en-US") {
+          setRecognitionLang("en-US");
+          setMicError(
+            "Network issue in current language. Switched mic recognition to English for stability. Tap Retry."
+          );
+          return;
+        }
+      }
+
       setMicError(knownErrors[event.error] || `Microphone error: ${event.error}`);
     };
 
@@ -335,9 +366,17 @@ export default function MicButton() {
       }
       recognitionRef.current = null;
     };
-  }, [preferredLang, handleCommand]);
+  }, [handleCommand, networkErrorCount, recognitionLang]);
 
   const startListening = () => {
+    if (offlineVoiceMode) {
+      setMicError(
+        "Offline Voice Mode is active. Use quick buttons or typed command below."
+      );
+      setShowPanel(true);
+      return;
+    }
+
     if (!recognitionRef.current) {
       setMicError("Microphone is not supported in this browser.");
       return;
@@ -345,6 +384,7 @@ export default function MicButton() {
 
     try {
       setMicError("");
+      setShowRetry(false);
       setTranscript("");
       setResponseText("");
       window.speechSynthesis?.resume();
@@ -476,7 +516,9 @@ export default function MicButton() {
               </p>
               <p className="text-center text-sm sm:text-base text-gray-400">
                 {isMicSupported
-                  ? "Speak now. Kannada, Hindi, and English are supported with friendly guidance."
+                  ? offlineVoiceMode
+                    ? "Offline Voice Mode: use quick buttons or type your command."
+                    : "Speak now. Kannada, Hindi, and English are supported with friendly guidance."
                   : "Microphone not supported. Use quick command buttons below."}
               </p>
 
@@ -497,6 +539,48 @@ export default function MicButton() {
                   {micError}
                 </p>
               )}
+
+              {showRetry && (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    onClick={() => {
+                      if (offlineVoiceMode) {
+                        setOfflineVoiceMode(false);
+                        setNetworkErrorCount(0);
+                      }
+                      stopListening();
+                      setTimeout(() => {
+                        setShowPanel(true);
+                        startListening();
+                      }, 250);
+                    }}
+                    className="px-4 py-2 rounded-xl text-sm font-semibold border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors"
+                  >
+                    Retry Mic
+                  </button>
+                </div>
+              )}
+
+              <div className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  value={typedCommand}
+                  onChange={(e) => setTypedCommand(e.target.value)}
+                  placeholder="Type command (medicine/help/water)"
+                  className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                />
+                <button
+                  onClick={() => {
+                    if (!typedCommand.trim()) return;
+                    handleCommand(typedCommand.trim());
+                    setTranscript(typedCommand.trim());
+                    setTypedCommand("");
+                  }}
+                  className="rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-3 py-2 text-sm"
+                >
+                  Send
+                </button>
+              </div>
 
               {/* Quick voice commands */}
               <div className="flex flex-wrap justify-center gap-2 mt-5">
