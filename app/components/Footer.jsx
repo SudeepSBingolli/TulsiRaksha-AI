@@ -1,6 +1,24 @@
 "use client";
 
+import { useI18n } from "@/app/i18n";
+
 export default function Footer() {
+  const { t } = useI18n();
+  const featureLinks = [
+    t("footer.featureVoice"),
+    t("footer.featureMedicine"),
+    t("footer.featureTracking"),
+    t("footer.featureFamily"),
+    t("footer.featureSos"),
+  ];
+  const supportLinks = [
+    t("footer.supportHelp"),
+    t("footer.supportContact"),
+    t("footer.supportPrivacy"),
+    t("footer.supportTerms"),
+    t("footer.supportAccess"),
+  ];
+
   return (
     <footer className="relative border-t border-gray-100 bg-white/50 pb-32 sm:pb-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -16,8 +34,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm sm:text-base text-gray-400 leading-relaxed max-w-xs">
-              AI-powered companion for dignified elderly care. Built with love
-              in India 🇮🇳
+              {t("footer.description")}
             </p>
             <div className="flex items-center gap-3 mt-5">
               <span className="text-xs font-medium text-gray-300 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
@@ -35,16 +52,10 @@ export default function Footer() {
           {/* Links */}
           <div>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-              Features
+              {t("footer.features")}
             </h4>
             <ul className="space-y-3">
-              {[
-                "Voice Assistant",
-                "Medicine Reminders",
-                "Health Tracking",
-                "Family Connect",
-                "SOS Alerts",
-              ].map((item) => (
+              {featureLinks.map((item) => (
                 <li key={item}>
                   <a
                     href="#"
@@ -59,16 +70,10 @@ export default function Footer() {
 
           <div>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-              Support
+              {t("footer.support")}
             </h4>
             <ul className="space-y-3">
-              {[
-                "Help Center",
-                "Contact Us",
-                "Privacy Policy",
-                "Terms of Service",
-                "Accessibility",
-              ].map((item) => (
+              {supportLinks.map((item) => (
                 <li key={item}>
                   <a
                     href="#"
@@ -84,15 +89,15 @@ export default function Footer() {
           {/* Emergency Contact */}
           <div>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-              Emergency
+              {t("footer.emergency")}
             </h4>
             <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
               <p className="text-2xl font-bold text-red-600 mb-1">112</p>
               <p className="text-sm text-red-500 font-medium">
-                National Emergency Number
+                {t("footer.emergencyNumberLabel")}
               </p>
               <button className="mt-3 w-full py-3 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-red-200/50">
-                🚨 SOS Call Now
+                {t("footer.emergencyButton")}
               </button>
             </div>
           </div>
@@ -101,12 +106,12 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-300">
-            © 2025 TulsiRaksha AI. All rights reserved.
+            {t("footer.rights")}
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-300">Made with</span>
+            <span className="text-xs text-gray-300">{t("footer.madeWith")}</span>
             <span className="text-red-400 animate-pulse">❤️</span>
-            <span className="text-xs text-gray-300">for Indian elders</span>
+            <span className="text-xs text-gray-300">{t("footer.forElders")}</span>
           </div>
         </div>
       </div>

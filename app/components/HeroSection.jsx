@@ -1,6 +1,9 @@
 "use client";
 
+import { useI18n } from "@/app/i18n";
+
 export default function HeroSection() {
+  const { t } = useI18n();
   return (
     <section className="relative py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Decorative Ribbon / Leaf Motif */}
@@ -62,7 +65,7 @@ export default function HeroSection() {
         <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-100 mb-8 sm:mb-10">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-emerald-700 text-sm sm:text-base font-medium tracking-wide">
-            AI-Powered Elder Care Companion
+            {t("hero.badge")}
           </span>
         </div>
 
@@ -77,14 +80,14 @@ export default function HeroSection() {
 
         {/* Subheadline */}
         <p className="text-xl sm:text-2xl lg:text-3xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto leading-relaxed mb-10 sm:mb-14">
-          Never Alone.{" "}
-          <span className="text-gray-600 font-normal">Always Cared For.</span>
+          {t("hero.sub1")} {" "}
+          <span className="text-gray-600 font-normal">{t("hero.sub2")}</span>
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
           <button className="group w-full sm:w-auto px-10 py-5 sm:py-6 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white text-lg sm:text-xl font-semibold rounded-2xl shadow-xl shadow-emerald-200/50 hover:shadow-emerald-300/60 transition-all duration-300 flex items-center justify-center gap-3">
-            <span>Get Started Free</span>
+            <span>{t("hero.ctaPrimary")}</span>
             <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
@@ -94,7 +97,7 @@ export default function HeroSection() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
             </svg>
-            <span>Watch Demo</span>
+            <span>{t("hero.ctaSecondary")}</span>
           </button>
         </div>
 
@@ -104,18 +107,18 @@ export default function HeroSection() {
             <svg className="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <span className="text-sm sm:text-base font-medium">10,000+ Families Trust Us</span>
+            <span className="text-sm sm:text-base font-medium">{t("hero.trustFamilies")}</span>
           </div>
           <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300" />
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
             </svg>
-            <span className="text-sm sm:text-base font-medium">HIPAA Compliant</span>
+            <span className="text-sm sm:text-base font-medium">{t("hero.hipaa")}</span>
           </div>
           <div className="hidden sm:block w-1 h-1 rounded-full bg-gray-300" />
           <div className="flex items-center gap-2">
-            <span className="text-sm sm:text-base font-medium">🇮🇳 Made in India</span>
+            <span className="text-sm sm:text-base font-medium">🇮🇳 {t("hero.madeInIndia")}</span>
           </div>
         </div>
       </div>

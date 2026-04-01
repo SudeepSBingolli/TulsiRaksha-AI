@@ -1,24 +1,30 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { getRiskFromML } from "@/lib/getRiskFromML";
+import { useI18n } from "@/app/i18n";
 
-function getRiskLevel(rate) {
-  if (rate > 110) return "HIGH";
-  if (rate < 50) return "LOW";
+function getRiskLevelFromRules({ heartRate, steps, sleep, medicine }) {
+  if (heartRate > 110 && steps < 2500 && sleep < 5.5) return "HIGH";
+  if (heartRate >= 105 && (steps < 3000 || sleep < 5)) return "HIGH";
+  if (heartRate < 60 && steps >= 5000 && sleep >= 7 && medicine === 1) return "LOW";
   return "NORMAL";
 }
 
 export default function HealthMetrics({ demoStep = "idle", userName = "Appa", userId = null }) {
+  const { t } = useI18n();
   const [heartRate, setHeartRate] = useState(92);
+  const [steps, setSteps] = useState(4200);
+  const [sleep, setSleep] = useState(7.1);
+  const [medicine, setMedicine] = useState(1);
+  const [riskLevel, setRiskLevel] = useState("NORMAL");
   const [lastUpdated, setLastUpdated] = useState("just now");
   const [isLoadingSensors, setIsLoadingSensors] = useState(true);
   const [showRiskPopup, setShowRiskPopup] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
   const [sendMessage, setSendMessage] = useState("");
   const highRiskVoiceTriggered = useRef(false);
-
-  const riskLevel = useMemo(() => getRiskLevel(heartRate), [heartRate]);
 
   const speak = useCallback((text) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -30,7 +36,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   }, []);
 
   const pushHealthSample = useCallback(
-    async (rate, source = "simulated") => {
+    async (sample, risk, source = "simulated") => {
       if (!userId) {
         setOfflineMode(true);
         return;
@@ -39,8 +45,11 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       try {
         const payload = {
           user_id: userId,
-          heart_rate: rate,
-          risk: getRiskLevel(rate),
+          heart_rate: sample.heartRate,
+          steps: sample.steps,
+          sleep: sample.sleep,
+          medicine: sample.medicine === 1,
+          risk,
           source,
           created_at: new Date().toISOString(),
         };
@@ -73,7 +82,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       try {
         const { data, error } = await supabase
           .from("health_data")
-          .select("heart_rate, created_at")
+          .select("heart_rate, steps, sleep, medicine, risk, created_at")
           .eq("user_id", userId)
           .order("created_at", { ascending: false })
           .limit(1)
@@ -83,6 +92,10 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
 
         if (data && mounted) {
           setHeartRate(data.heart_rate);
+          setSteps(data.steps ?? 4200);
+          setSleep(data.sleep ?? 7.1);
+          setMedicine(data.medicine ? 1 : 0);
+          setRiskLevel(data.risk || "NORMAL");
           setLastUpdated("just now");
         }
 
@@ -101,11 +114,33 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   }, [userId]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const nextRate = Math.floor(Math.random() * 70) + 45;
-      setHeartRate(nextRate);
+    const interval = setInterval(async () => {
+      const sample = {
+        heartRate: Math.floor(Math.random() * 81) + 50,
+        steps: Math.floor(Math.random() * 7001),
+        sleep: Number((Math.random() * 6 + 3).toFixed(1)),
+        medicine: Math.random() > 0.35 ? 1 : 0,
+      };
+
+      setHeartRate(sample.heartRate);
+      setSteps(sample.steps);
+      setSleep(sample.sleep);
+      setMedicine(sample.medicine);
+
+      const mlRisk = await getRiskFromML({
+        heart_rate: sample.heartRate,
+        steps: sample.steps,
+        sleep: sample.sleep,
+        medicine: sample.medicine,
+      });
+
+      const fallbackRisk = getRiskLevelFromRules(sample);
+      const resolvedRisk = mlRisk || fallbackRisk;
+
+      setRiskLevel(resolvedRisk);
       setLastUpdated("just now");
-      pushHealthSample(nextRate);
+
+      pushHealthSample(sample, resolvedRisk);
     }, 3000);
 
     return () => clearInterval(interval);
@@ -122,6 +157,10 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
         (payload) => {
           if (payload.new.user_id !== userId) return;
           setHeartRate(payload.new.heart_rate);
+          setSteps(payload.new.steps ?? 4200);
+          setSleep(payload.new.sleep ?? 7.1);
+          setMedicine(payload.new.medicine ? 1 : 0);
+          setRiskLevel(payload.new.risk || "NORMAL");
           setLastUpdated("just now");
         }
       )
@@ -138,7 +177,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
 
   const metrics = [
     {
-      label: "Heart Rate",
+      label: t("health.heartRate"),
       value: heartRate,
       unit: "BPM",
       icon: "❤️",
@@ -148,34 +187,34 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       trend: riskLevel.toLowerCase(),
     },
     {
-      label: "Blood Pressure",
-      value: "128/82",
-      unit: "mmHg",
+      label: t("health.dailySteps"),
+      value: steps,
+      unit: "steps",
       icon: "🩺",
       color: "blue",
       bgColor: "bg-blue-50",
       textColor: "text-blue-700",
-      trend: "slightly high",
+      trend: steps >= 4500 ? "normal" : "monitoring",
     },
     {
-      label: "Blood Sugar",
-      value: "142",
-      unit: "mg/dL",
+      label: t("health.sleep"),
+      value: sleep,
+      unit: "hrs",
       icon: "🩸",
       color: "amber",
       bgColor: "bg-amber-50",
       textColor: "text-amber-700",
-      trend: "monitoring",
+      trend: sleep >= 7 ? "normal" : "monitoring",
     },
     {
-      label: "SpO₂ Level",
-      value: "97",
-      unit: "%",
+      label: t("health.medicine"),
+      value: medicine,
+      unit: medicine ? t("health.taken") : t("health.missed"),
       icon: "🫁",
       color: "emerald",
       bgColor: "bg-emerald-50",
       textColor: "text-emerald-700",
-      trend: "excellent",
+      trend: medicine ? "excellent" : "monitoring",
     },
   ];
 
@@ -189,6 +228,20 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   };
 
   const riskDot = riskLevel === "HIGH" ? "🔴" : riskLevel === "LOW" ? "🟡" : "🟢";
+  const riskLabel =
+    riskLevel === "HIGH"
+      ? t("health.riskHigh")
+      : riskLevel === "LOW"
+      ? t("health.riskLow")
+      : t("health.riskNormal");
+
+  const trendLabel = (trend) => {
+    if (trend === "high") return t("health.trendHigh");
+    if (trend === "low") return t("health.trendLow");
+    if (trend === "monitoring") return t("health.trendMonitoring");
+    if (trend === "excellent") return t("health.trendExcellent");
+    return t("health.trendNormal");
+  };
   const riskColor =
     riskLevel === "HIGH"
       ? "text-red-700"
@@ -200,8 +253,8 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   const sendUpdateToFamily = useCallback(() => {
     const message = `TulsiRaksha Alert\nUser: ${userName}\nHeart Rate: ${heartRate} BPM\nRisk: ${riskLevel}\nStatus: Monitoring Active`;
     console.log("[TulsiRaksha] Simulated family update:\n", message);
-    setSendMessage("Update logged in console (simulated send).");
-  }, [heartRate, riskLevel, userName]);
+    setSendMessage(t("health.updateLogged"));
+  }, [heartRate, riskLevel, t, userName]);
 
   useEffect(() => {
     if (riskLevel === "HIGH") {
@@ -228,9 +281,9 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Health Vitals
+            {t("health.title")}
           </h3>
-          <p className="text-sm font-semibold text-gray-500 mt-1">Last updated {lastUpdated}</p>
+          <p className="text-sm font-semibold text-gray-500 mt-1">{t("health.lastUpdated")} {lastUpdated}</p>
         </div>
         <button className="w-12 h-12 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors border border-gray-100 active:scale-95">
           <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -241,36 +294,36 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
 
       {isLoadingSensors && (
         <div className="mb-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-          <p className="text-base font-semibold text-emerald-700">Connecting to health sensors...</p>
+          <p className="text-base font-semibold text-emerald-700">{t("health.connecting")}</p>
         </div>
       )}
 
       {riskLevel === "HIGH" && (
         <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
-          <p className="text-base sm:text-lg font-bold text-red-700">⚠️ High Risk Detected</p>
-          <p className="text-sm sm:text-base text-red-600 mt-1">Please sit down and relax. Family can be notified now.</p>
+          <p className="text-base sm:text-lg font-bold text-red-700">{t("health.highRisk")}</p>
+          <p className="text-sm sm:text-base text-red-600 mt-1">{t("health.sitRelax")}</p>
         </div>
       )}
 
       <div className="mb-5 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 sm:p-5">
         <p className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
-          Live Health Status
+          {t("health.liveStatus")}
         </p>
         <p className="text-2xl sm:text-3xl font-bold text-rose-700">❤️ {heartRate} BPM</p>
         <p className={`text-sm sm:text-base font-semibold mt-1 ${riskColor}`}>
-          Risk: {riskLevel} {riskDot}
+          {t("health.risk")}: {riskLabel} {riskDot}
         </p>
-        <p className="text-base sm:text-lg text-gray-700 mt-2 font-semibold">Status: Monitoring Active</p>
-        <p className="text-sm text-emerald-700 mt-1 font-semibold">You are safe ❤️</p>
+        <p className="text-base sm:text-lg text-gray-700 mt-2 font-semibold">{t("health.status")}</p>
+        <p className="text-sm text-emerald-700 mt-1 font-semibold">{t("health.safe")}</p>
         <p className={`text-xs sm:text-sm mt-2 font-semibold ${offlineMode ? "text-amber-700" : "text-emerald-700"}`}>
-          {offlineMode ? "Offline mode" : "Synced with Supabase"}
+          {offlineMode ? t("health.offline") : t("health.synced")}
         </p>
 
         <button
           onClick={sendUpdateToFamily}
           className="mt-4 px-5 py-3 rounded-2xl text-base font-bold border border-emerald-600 bg-emerald-600 hover:bg-emerald-700 text-white transition-transform active:scale-[0.98]"
         >
-          Send Update to Family
+          {t("health.sendUpdate")}
         </button>
 
         {sendMessage && <p className="text-sm mt-2 font-semibold text-emerald-700">{sendMessage}</p>}
@@ -283,7 +336,7 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
             className={`${metric.bgColor} rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:shadow-md transition-shadow`}
           >
             <div className="flex items-start justify-between mb-3">
-              {metric.label !== "Heart Rate" ? (
+              {idx !== 0 ? (
                 <span className="text-2xl">{metric.icon}</span>
               ) : (
                 <span />
@@ -293,13 +346,13 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
                   trendColors[metric.trend] || trendColors.normal
                 }`}
               >
-                {metric.trend}
+                {trendLabel(metric.trend)}
               </span>
             </div>
             <p
               className={`text-2xl sm:text-3xl font-bold ${metric.textColor} flex items-center`}
             >
-              {metric.label === "Heart Rate" && (
+              {idx === 0 && (
                 <span className="text-2xl sm:text-3xl mr-2">{metric.icon}</span>
               )}
               {metric.value}
@@ -316,9 +369,9 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
 
       {showRiskPopup && (
         <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5 animate-pulse">
-          <p className="text-base sm:text-lg font-bold text-red-700">🔴 ALERT POPUP</p>
+          <p className="text-base sm:text-lg font-bold text-red-700">{t("health.alertPopup")}</p>
           <p className="text-sm text-red-600 mt-1">
-            Please sit down and relax. We are monitoring you continuously.
+            {t("health.monitoringText")}
           </p>
         </div>
       )}

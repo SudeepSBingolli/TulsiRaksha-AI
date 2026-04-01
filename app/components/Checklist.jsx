@@ -2,35 +2,37 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useI18n } from "@/app/i18n";
 
 const DEFAULT_ITEMS = [
     {
       id: 1,
       key: "medicine_taken",
-      label: "Medicine Taken",
+      label: "checklist.medicineTaken",
       emoji: "💊",
       checked: false,
-      subtitle: "Metformin 500mg + BP tablet",
+      subtitle: "checklist.medicineSubtitle",
     },
     {
       id: 2,
       key: "drank_water",
-      label: "Drank Water",
+      label: "checklist.drankWater",
       emoji: "💧",
       checked: false,
-      subtitle: "At least 4 glasses",
+      subtitle: "checklist.waterSubtitle",
     },
     {
       id: 3,
       key: "walked",
-      label: "Walked",
+      label: "checklist.walked",
       emoji: "🚶",
       checked: false,
-      subtitle: "30 minutes morning walk",
+      subtitle: "checklist.walkedSubtitle",
     },
   ];
 
 export default function Checklist({ demoActive = false, userId = null }) {
+  const { t } = useI18n();
   const [items, setItems] = useState(DEFAULT_ITEMS);
   const [offlineMode, setOfflineMode] = useState(false);
 
@@ -136,7 +138,7 @@ export default function Checklist({ demoActive = false, userId = null }) {
     >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
-          Today&apos;s Checklist
+          {t("checklist.title")}
         </h3>
         <span className="text-base sm:text-lg font-bold text-emerald-600">
           {completedCount}/{items.length}
@@ -144,7 +146,7 @@ export default function Checklist({ demoActive = false, userId = null }) {
       </div>
 
       <p className={`text-xs sm:text-sm mb-3 font-semibold ${offlineMode ? "text-amber-600" : "text-emerald-600"}`}>
-        {offlineMode ? "Offline mode: saved on this device" : "Synced with Supabase"}
+        {offlineMode ? t("checklist.offline") : t("checklist.synced")}
       </p>
 
       {/* Progress Bar */}
@@ -206,14 +208,14 @@ export default function Checklist({ demoActive = false, userId = null }) {
                     : "text-gray-800"
                 }`}
               >
-                {item.label}
+                  {t(item.label)}
               </span>
               <span
                 className={`text-xs sm:text-sm block mt-0.5 ${
                   item.checked ? "text-emerald-500" : "text-gray-400"
                 }`}
               >
-                {item.checked ? "Completed" : item.subtitle}
+                {item.checked ? t("checklist.completed") : t(item.subtitle)}
               </span>
             </div>
           </button>

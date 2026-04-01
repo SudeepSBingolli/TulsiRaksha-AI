@@ -8,8 +8,14 @@ import Dashboard from "./components/Dashboard";
 import MicButton from "./components/MicButton";
 import Footer from "./components/Footer";
 import { supabase } from "@/lib/supabaseClient";
+import { useI18n } from "./i18n";
 
 export default function Home() {
+  return <HomeContent />;
+}
+
+function HomeContent() {
+  const { t } = useI18n();
   const [session, setSession] = useState(null);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -74,7 +80,7 @@ export default function Home() {
           <section className="px-4 sm:px-6 lg:px-8 pb-20">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-emerald-100 p-8 shadow-sm text-center">
               <p className="text-xl font-semibold text-emerald-700">
-                Connecting to health sensors...
+                {t("page.connecting")}
               </p>
             </div>
           </section>
@@ -85,17 +91,17 @@ export default function Home() {
                 <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-200 rounded-3xl p-6 sm:p-7 flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="text-lg sm:text-xl font-bold text-amber-800">
-                      Login to sync data across devices
+                      {t("page.syncTitle")}
                     </p>
                     <p className="text-sm sm:text-base text-amber-700 mt-1">
-                      Offline demo mode is active. You are safe ❤️
+                      {t("page.offlineText")}
                     </p>
                   </div>
                   <Link
                     href="/login"
                     className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base"
                   >
-                    Go to Login
+                    {t("page.goLogin")}
                   </Link>
                 </div>
               </section>

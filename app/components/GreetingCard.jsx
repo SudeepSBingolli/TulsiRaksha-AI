@@ -1,23 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useI18n } from "@/app/i18n";
 
 export default function GreetingCard({ demoActive = false, userName = "Appa" }) {
+  const { language, t } = useI18n();
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
+      const locale = language === "KN" ? "kn-IN" : language === "HI" ? "hi-IN" : "en-IN";
       setCurrentTime(
-        now.toLocaleTimeString("en-IN", {
+        now.toLocaleTimeString(locale, {
           hour: "2-digit",
           minute: "2-digit",
           hour12: true,
         })
       );
       setCurrentDate(
-        now.toLocaleDateString("en-IN", {
+        now.toLocaleDateString(locale, {
           weekday: "long",
           day: "numeric",
           month: "long",
@@ -28,13 +31,13 @@ export default function GreetingCard({ demoActive = false, userName = "Appa" }) 
     updateTime();
     const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [language]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
+    if (hour < 12) return t("greeting.morning");
+    if (hour < 17) return t("greeting.afternoon");
+    return t("greeting.evening");
   };
 
   return (
@@ -69,7 +72,7 @@ export default function GreetingCard({ demoActive = false, userName = "Appa" }) 
         </div>
         <h3 className="text-2xl sm:text-3xl font-bold mb-1">{userName} 👋</h3>
         <p className="text-emerald-100 text-base sm:text-lg font-light mt-3">
-          ನಮಸ್ಕಾರ ಅಪ್ಪ — You&apos;re doing great today!
+          {t("greeting.message")}
         </p>
 
         <div className="flex items-center gap-4 mt-6 pt-5 border-t border-white/20">

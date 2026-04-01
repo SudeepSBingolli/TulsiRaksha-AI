@@ -7,23 +7,25 @@ import Checklist from "./Checklist";
 import ActivityChart from "./ActivityChart";
 import QuickActions from "./QuickActions";
 import HealthMetrics from "./HealthMetrics";
+import { useI18n } from "@/app/i18n";
 
 export default function Dashboard({ userName = "Appa", userId = null }) {
+  const { t } = useI18n();
   const [demoStep, setDemoStep] = useState("idle");
   const [isDemoRunning, setIsDemoRunning] = useState(false);
 
   const stepLabel = useMemo(() => {
     const labels = {
-      idle: "Ready",
-      greeting: "Emotional start: Appa greeting",
-      checklist: "Checklist shown",
-      heart: "Live heart rate shown",
-      alert: "High-risk alert popup",
-      sos: "SOS highlighted",
-      done: "Demo complete",
+      idle: t("dashboard.demoReady"),
+      greeting: t("dashboard.demoGreeting"),
+      checklist: t("dashboard.demoChecklist"),
+      heart: t("dashboard.demoHeart"),
+      alert: t("dashboard.demoAlert"),
+      sos: t("dashboard.demoSos"),
+      done: t("dashboard.demoDone"),
     };
-    return labels[demoStep] || "Ready";
-  }, [demoStep]);
+    return labels[demoStep] || t("dashboard.demoReady");
+  }, [demoStep, t]);
 
   useEffect(() => {
     if (!isDemoRunning) return;
@@ -56,13 +58,13 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Your Dashboard
+              {t("dashboard.title")}
             </h2>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline text-sm text-gray-500 font-medium">
-              Demo: {stepLabel}
+              {t("dashboard.demoLabel")} {stepLabel}
             </span>
             <button
               onClick={startDemo}
@@ -73,7 +75,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
                   : "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600"
               }`}
             >
-              {isDemoRunning ? "Running Demo..." : "Run Demo Flow"}
+              {isDemoRunning ? t("dashboard.runningDemo") : t("dashboard.runDemo")}
             </button>
           </div>
         </div>
@@ -98,7 +100,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
               demoActive={demoStep === "sos"}
               autoTriggerSos={demoStep === "sos"}
             />
-            <UpcomingReminders />
+            <UpcomingReminders t={t} />
           </div>
         </div>
       </div>
@@ -106,29 +108,29 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
   );
 }
 
-function UpcomingReminders() {
+function UpcomingReminders({ t }) {
   const reminders = [
     {
       time: "9:00 AM",
-      label: "Morning Medicine",
+      label: t("dashboard.reminderMorningMedicine"),
       icon: "💊",
       status: "done",
     },
     {
       time: "11:00 AM",
-      label: "Doctor Video Call",
+      label: t("dashboard.reminderDoctorCall"),
       icon: "👨‍⚕️",
       status: "upcoming",
     },
     {
       time: "2:00 PM",
-      label: "Afternoon Medicine",
+      label: t("dashboard.reminderAfternoonMedicine"),
       icon: "💊",
       status: "pending",
     },
     {
       time: "5:00 PM",
-      label: "Evening Walk",
+      label: t("dashboard.reminderEveningWalk"),
       icon: "🚶",
       status: "pending",
     },
@@ -138,10 +140,10 @@ function UpcomingReminders() {
     <div className="bg-white rounded-3xl border border-gray-100 p-6 sm:p-7 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg sm:text-xl font-bold text-gray-900">
-          Upcoming
+          {t("dashboard.upcoming")}
         </h3>
         <button className="text-sm text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
-          View All
+          {t("dashboard.viewAll")}
         </button>
       </div>
 
