@@ -1,0 +1,17 @@
+{
+  "buildCommand": "pip install -r requirements.txt",
+  "framework": "flask",
+  "outputDirectory": ".",
+  "public": false,
+  "functions": {
+    "vercel_api.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "vercel_api.py"
+    }
+  ]
+}
