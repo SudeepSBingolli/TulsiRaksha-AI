@@ -1,0 +1,22 @@
+# Python files (local development only)
+app.py
+train_model.py
+generate_dataset.py
+requirements.txt
+*.pyc
+__pycache__/
+venv/
+.venv/
+env/
+
+# Other files not needed for deployment
+.git/
+.gitignore
+.env.local
+.env.local.template
+AGENTS.md
+CLAUDE.md
+AUTH_SETUP.md
+IMPLEMENTATION_SUMMARY.md
+VOICE_QUICK_START.md
+*.md
