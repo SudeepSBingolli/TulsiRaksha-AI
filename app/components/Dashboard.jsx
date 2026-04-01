@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import GreetingCard from "./GreetingCard";
 import Checklist from "./Checklist";
@@ -11,6 +12,7 @@ import EmotionVoiceCompanion from "./EmotionVoiceCompanion";
 import { useI18n } from "@/app/i18n";
 
 export default function Dashboard({ userName = "Appa", userId = null }) {
+  const router = useRouter();
   const { t } = useI18n();
   const [demoStep, setDemoStep] = useState("idle");
   const [isDemoRunning, setIsDemoRunning] = useState(false);
@@ -54,6 +56,17 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 pb-32 sm:pb-40">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="mb-6 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+
         {/* Section Label */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 sm:mb-10">
           <div className="flex items-center gap-3">

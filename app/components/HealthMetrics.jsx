@@ -23,8 +23,10 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   const [isLoadingSensors, setIsLoadingSensors] = useState(true);
   const [showRiskPopup, setShowRiskPopup] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
+  const [familyPhone, setFamilyPhone] = useState("");
   const [sendMessage, setSendMessage] = useState("");
   const highRiskVoiceTriggered = useRef(false);
+  const autoOpenedWhatsApp = useRef(false);
 
   const speak = useCallback((text) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -110,6 +112,39 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
 
     return () => {
       mounted = false;
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadFamilyPhone = async () => {
+      if (!userId) {
+        if (active) setFamilyPhone("");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("user_details")
+        .select("phone")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!active) return;
+
+      if (error) {
+        console.warn("[HealthMetrics] Failed to load family contact", error.message);
+        setFamilyPhone("");
+        return;
+      }
+
+      setFamilyPhone(data?.phone || "");
+    };
+
+    loadFamilyPhone();
+
+    return () => {
+      active = false;
     };
   }, [userId]);
 
@@ -250,11 +285,68 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
       : "text-emerald-700";
   const demoHighlight = demoStep === "heart" || demoStep === "alert";
 
+  const buildWhatsAppMessage = () => [
+    `Hello, this is an automated health update for ${userName}.`,
+    `Heart Rate: ${heartRate} BPM`,
+    `Steps: ${steps}`,
+    `Sleep: ${sleep} hrs`,
+    `Medicine: ${medicine ? "Taken" : "Missed"}`,
+    `Status: ${riskLevel === "HIGH" ? "High Risk" : riskLevel === "LOW" ? "Normal" : "Monitoring Active"}`,
+    `Risk Level: ${riskLevel}`,
+    "Please check on them if needed.",
+  ].join("\n");
+
+  const normalizePhoneNumber = (phone) => {
+    const digits = String(phone || "").replace(/[^\d]/g, "");
+    return digits.length >= 10 ? digits : "";
+  };
+
   const sendUpdateToFamily = useCallback(() => {
-    const message = `TulsiRaksha Alert\nUser: ${userName}\nHeart Rate: ${heartRate} BPM\nRisk: ${riskLevel}\nStatus: Monitoring Active`;
-    console.log("[TulsiRaksha] Simulated family update:\n", message);
-    setSendMessage(t("health.updateLogged"));
-  }, [heartRate, riskLevel, t, userName]);
+    try {
+      const recipientPhone = normalizePhoneNumber(familyPhone);
+
+      if (!recipientPhone) {
+        throw new Error("Save a valid family contact phone number in your profile first.");
+      }
+
+      if (typeof window === "undefined") {
+        throw new Error("WhatsApp can only be opened in a browser.");
+      }
+
+      const message = buildWhatsAppMessage();
+      const whatsappUrl = `https://wa.me/${recipientPhone}?text=${encodeURIComponent(message)}`;
+
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      setSendMessage("WhatsApp opened with the report ready to send.");
+    } catch (error) {
+      setSendMessage(error?.message || "Unable to open WhatsApp right now.");
+    }
+  }, [familyPhone, heartRate, medicine, riskLevel, sleep, steps, userName]);
+
+  useEffect(() => {
+    const shouldAutoOpen = riskLevel === "HIGH" && familyPhone && !autoOpenedWhatsApp.current;
+
+    if (!shouldAutoOpen) {
+      if (riskLevel !== "HIGH") {
+        autoOpenedWhatsApp.current = false;
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const recipientPhone = normalizePhoneNumber(familyPhone);
+      if (!recipientPhone || typeof window === "undefined") return;
+
+      const message = buildWhatsAppMessage();
+      const whatsappUrl = `https://wa.me/${recipientPhone}?text=${encodeURIComponent(message)}`;
+
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      setSendMessage("WhatsApp opened automatically with the report ready to send.");
+      autoOpenedWhatsApp.current = true;
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [familyPhone, heartRate, medicine, riskLevel, sleep, steps, userName]);
 
   useEffect(() => {
     if (riskLevel === "HIGH") {

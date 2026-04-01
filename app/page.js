@@ -1,85 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 import Navbar from "@/app/components/Navbar";
-import Dashboard from "@/app/components/Dashboard";
 import Footer from "@/app/components/Footer";
 import LandingView from "@/app/components/LandingView";
 
 export default function HomePage() {
-  const router = useRouter();
   const [checking, setChecking] = useState(true);
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState("Friend");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function init() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        // Not logged in → show landing page
-        if (active) {
-          setIsLoggedIn(false);
-          setChecking(false);
-        }
-        return;
-      }
-
-      if (active) {
-        setUserId(user.id);
-        setIsLoggedIn(true);
-      }
-
-      // Fetch display name
       try {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        if (active && profile?.full_name) {
-          setUserName(profile.full_name.split(" ")[0]);
-        } else if (active) {
-          setUserName(user.email?.split("@")[0] || "Friend");
-        }
+        await supabase.auth.getUser();
+        if (active) setChecking(false);
       } catch {
-        // Silently ignore
+        if (active) setChecking(false);
       }
-
-      if (active) setChecking(false);
     }
 
     init();
-
-    // Listen for auth changes (login/logout)
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUserId(session.user.id);
-        setIsLoggedIn(true);
-        setUserName(session.user.email?.split("@")[0] || "Friend");
-      } else {
-        setUserId(null);
-        setIsLoggedIn(false);
-        setUserName("Friend");
-      }
-    });
-
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
-  }, [router]);
+  }, []);
 
   /* ── Loading spinner ── */
   if (checking) {
@@ -119,19 +63,13 @@ export default function HomePage() {
         {/* Navbar — always visible */}
         <Navbar />
 
-        {/* Main content */}
+        {/* Main content — only LandingView */}
         <main className="flex-1">
-          {isLoggedIn ? (
-            <div className="pt-6 pb-4">
-              <Dashboard userName={userName} userId={userId} />
-            </div>
-          ) : (
-            <LandingView />
-          )}
+          <LandingView />
         </main>
 
-        {/* Footer — only for logged-in users */}
-        {isLoggedIn && <Footer />}
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

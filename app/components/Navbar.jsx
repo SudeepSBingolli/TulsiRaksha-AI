@@ -44,10 +44,11 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t("nav.home"), path: "/" },
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Features", path: "/features" },
+    { label: "Benefits", path: "/benefits" },
+    { label: "Family Sync", path: "/family-sync" },
     { label: "AI Assistant", path: "/assistant" },
-    { label: t("nav.reminders"), path: "/reminders" },
-    { label: t("nav.health"), path: "/health" },
-    { label: t("nav.family"), path: "/family" },
   ];
 
   const isActiveLink = (path) => {
