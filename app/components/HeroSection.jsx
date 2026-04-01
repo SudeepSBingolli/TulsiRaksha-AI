@@ -61,8 +61,8 @@ export default function HeroSection() {
               <Button href="/login" className="text-lg sm:text-xl px-8 py-4">
                 {t("hero.ctaPrimary")}
               </Button>
-              <Button href="/login" className="text-lg sm:text-xl px-8 py-4">
-                {t("hero.ctaPrimary")}
+              <Button href="/assistant" variant="secondary" className="text-lg sm:text-xl px-8 py-4">
+                {t("hero.ctaSecondary")}
               </Button>
 
               <MicButton inline />

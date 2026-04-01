@@ -1,13 +1,9 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
-import { useI18n } from "@/app/i18n";
-import MicButton from "./MicButton";
+import HeroSection from "./HeroSection";
 
 export default function LandingView() {
-  const { t } = useI18n();
-  const micRef = useRef(null);
 
   const exploreOptions = [
     {
@@ -40,8 +36,8 @@ export default function LandingView() {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto space-y-10 sm:space-y-14">
-        {/* Empty space for demo video */}
-        <div className="h-64 sm:h-96 lg:h-[500px]" />
+        {/* ── Hero Section ── */}
+        <HeroSection />
 
         {/* ═══════════════════════════════════════
             EXPLORE MORE SECTIONS
@@ -83,8 +79,7 @@ export default function LandingView() {
         </div>
       </div>
 
-      {/* ── Floating MicButton (hidden, activated via ref) ── */}
-      <MicButton ref={micRef} />
+      {/* HeroSection contains its own MicButton */}
     </section>
   );
 }
