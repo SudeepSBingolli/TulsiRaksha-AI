@@ -7,6 +7,7 @@ import Checklist from "./Checklist";
 import ActivityChart from "./ActivityChart";
 import QuickActions from "./QuickActions";
 import HealthMetrics from "./HealthMetrics";
+import EmotionVoiceCompanion from "./EmotionVoiceCompanion";
 import { useI18n } from "@/app/i18n";
 
 export default function Dashboard({ userName = "Appa", userId = null }) {
@@ -100,6 +101,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
               demoActive={demoStep === "sos"}
               autoTriggerSos={demoStep === "sos"}
             />
+            <EmotionVoiceCompanion />
             <UpcomingReminders t={t} />
           </div>
         </div>
