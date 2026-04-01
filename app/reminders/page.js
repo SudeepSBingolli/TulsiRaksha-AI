@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from 'react'
 import Link from 'next/link' // Added for Navbar component usage, though not used in RemindersPage directly
 import { usePathname } from 'next/navigation' // Added for Navbar component usage, though not used in RemindersPage directly
 
@@ -523,7 +523,7 @@ function AddModal({ onClose, onAdd }) {
                 <div>
                   <p style={{ fontSize: 19, fontWeight: 700, color: '#065f46' }}>Voice to Text</p>
                   <p style={{ fontSize: 14, color: '#059669', fontWeight: 500, marginTop: 2 }}>
-                    Speak your reminder — we'll write it down
+                    Speak your reminder — we&apos;ll write it down
                   </p>
                 </div>
               </button>
@@ -794,12 +794,11 @@ function Legend() {
 export default function RemindersPage() {
   const [reminders, setReminders] = useState(SEED)
   const [showModal, setShowModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false)
 
   // Re-render every minute to update colors based on time
   const [, setTick] = useState(0)
   useEffect(() => {
-    setMounted(true)
     const interval = setInterval(() => setTick(t => t + 1), 60000)
     return () => clearInterval(interval)
   }, [])

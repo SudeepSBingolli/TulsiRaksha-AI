@@ -82,7 +82,7 @@ export default function SignupPage() {
               Create Account
             </h1>
             <p className="text-gray-600 text-center mb-8">
-              Choose how you'd like to sign up
+              Choose how you&apos;d like to sign up
             </p>
 
             <div className="space-y-4">
