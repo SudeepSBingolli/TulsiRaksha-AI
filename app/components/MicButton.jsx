@@ -14,7 +14,7 @@ export default function MicButton() {
     return "kn-IN";
   });
   const [voices, setVoices] = useState([]);
-  const waveHeights = useRef([16, 24, 20, 28, 18, 26, 22]).current;
+  const waveHeights = [16, 24, 20, 28, 18, 26, 22];
   const [isListening, setIsListening] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
   const [pulseScale, setPulseScale] = useState(1);

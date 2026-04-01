@@ -385,7 +385,7 @@ function AlertsCard({ alerts }) {
     <div className="rounded-3xl border border-gray-100 bg-white p-6 sm:p-7">
       <div className="mb-5">
         <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Health Alerts</h3>
-        <p className="text-sm text-gray-400 mt-1">Important observations from today's data</p>
+        <p className="text-sm text-gray-400 mt-1">Important observations from today&apos;s data</p>
       </div>
 
       <div className="space-y-3">
