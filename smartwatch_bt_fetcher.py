@@ -23,15 +23,69 @@ class GadgetbridgeBLEDataFetcher:
         self.api_url = api_url
         self.client = None
         self.device = None
+        self.heart_rate_notify_enabled = False
+        self.battery_notify_enabled = False
         
         # Real data buffers
         self.heart_rate = 0
         self.steps = 0
+        self.battery = 0
         self.sleep = 7
         self.medicine = 1
         self.stress_level = 50
         self.acceleration = 0
         self.calories = 0
+
+    def _heart_rate_callback(self, sender, data):
+        """Handle heart-rate notifications from smartwatch."""
+        try:
+            if not data:
+                return
+            flags = data[0]
+            # Bit 0 indicates uint8 (0) or uint16 (1) heart-rate format.
+            if flags & 0x01 and len(data) >= 3:
+                self.heart_rate = struct.unpack("<H", data[1:3])[0]
+            elif len(data) >= 2:
+                self.heart_rate = int(data[1])
+        except Exception:
+            pass
+
+    def _battery_callback(self, sender, data):
+        """Handle battery notifications."""
+        try:
+            if data and len(data) >= 1:
+                self.battery = int(data[0])
+        except Exception:
+            pass
+
+    async def _enable_notifications(self):
+        """Enable notify streams for characteristics that are notify-only."""
+        if not self.client or not self.client.is_connected:
+            return
+
+        try:
+            services = self.client.services
+            for service in services:
+                for char in service.characteristics:
+                    if (
+                        char.uuid.lower() == self.HEART_RATE_UUID
+                        and "notify" in char.properties
+                        and not self.heart_rate_notify_enabled
+                    ):
+                        await self.client.start_notify(char.uuid, self._heart_rate_callback)
+                        self.heart_rate_notify_enabled = True
+                        print("  ✓ Heart-rate notifications enabled")
+
+                    if (
+                        char.uuid.lower() == self.BATTERY_UUID
+                        and "notify" in char.properties
+                        and not self.battery_notify_enabled
+                    ):
+                        await self.client.start_notify(char.uuid, self._battery_callback)
+                        self.battery_notify_enabled = True
+                        print("  ✓ Battery notifications enabled")
+        except Exception as e:
+            print(f"  ⚠️  Notification setup warning: {e}")
         
     async def scan_devices(self):
         """Scan and list available Bluetooth devices"""
@@ -39,10 +93,12 @@ class GadgetbridgeBLEDataFetcher:
         devices = await BleakScanner.discover()
         
         smartwatches = []
+        candidates = []
         for device in devices:
             name = device.name or "Unknown"
+            candidates.append((device, name))
             # Filter for common smartwatch names
-            if any(x in name.lower() for x in ['mi band', 'amazfit', 'pebble', 'garmin', 'fitbit', 'honor', 'huawei']):
+            if any(x in name.lower() for x in ['mi band', 'amazfit', 'pebble', 'garmin', 'fitbit', 'honor', 'huawei', 'watch', 'band', 'bgr', 'fb']):
                 smartwatches.append((device, name))
                 print(f"  ✓ {name} ({device.address})")
         
@@ -50,6 +106,9 @@ class GadgetbridgeBLEDataFetcher:
             print("  ⚠️  No smartwatches found. Available devices:")
             for device in devices[:5]:
                 print(f"     - {device.name or 'Unknown'} ({device.address})")
+            # Many BLE wearables advertise as Unknown on Windows.
+            # Return all candidates as fallback so caller can try connecting.
+            return candidates
         
         return smartwatches
     
@@ -59,6 +118,8 @@ class GadgetbridgeBLEDataFetcher:
             print(f"\n🔌 Connecting to {device_address}...")
             self.client = BleakClient(device_address)
             await self.client.connect()
+            await self._enable_notifications()
+            await asyncio.sleep(2)
             print("✅ Connected!")
             return True
         except Exception as e:
@@ -70,9 +131,13 @@ class GadgetbridgeBLEDataFetcher:
         try:
             if not self.client or not self.client.is_connected:
                 return None
+
+            # Prefer notification-fed value for notify-only HR characteristics.
+            if self.heart_rate > 0:
+                return self.heart_rate
             
             # Try to read from Heart Rate characteristic
-            services = await self.client.get_services()
+            services = self.client.services
             for service in services:
                 for char in service.characteristics:
                     if "heart" in char.description.lower() or char.uuid == self.HEART_RATE_UUID:
@@ -95,7 +160,7 @@ class GadgetbridgeBLEDataFetcher:
             if not self.client or not self.client.is_connected:
                 return None
             
-            services = await self.client.get_services()
+            services = self.client.services
             for service in services:
                 for char in service.characteristics:
                     if "step" in char.description.lower():
@@ -116,8 +181,11 @@ class GadgetbridgeBLEDataFetcher:
         try:
             if not self.client or not self.client.is_connected:
                 return None
+
+            if self.battery > 0:
+                return self.battery
             
-            services = await self.client.get_services()
+            services = self.client.services
             for service in services:
                 for char in service.characteristics:
                     if "battery" in char.description.lower() or char.uuid == self.BATTERY_UUID:
@@ -166,10 +234,6 @@ class GadgetbridgeBLEDataFetcher:
                 "sleep": data.get("sleep", self.sleep),
                 "medicine": data.get("medicine", self.medicine),
             }
-            
-            # Ensure valid values
-            if payload["heart_rate"] == 0 or payload["steps"] == 0:
-                return None
             
             response = requests.post(self.api_url, json=payload, timeout=5)
             
@@ -237,6 +301,13 @@ class GadgetbridgeBLEDataFetcher:
     async def disconnect(self):
         """Disconnect from device"""
         if self.client:
+            try:
+                if self.heart_rate_notify_enabled:
+                    await self.client.stop_notify(self.HEART_RATE_UUID)
+                if self.battery_notify_enabled:
+                    await self.client.stop_notify(self.BATTERY_UUID)
+            except Exception:
+                pass
             await self.client.disconnect()
             print("\n🔌 Disconnected")
 

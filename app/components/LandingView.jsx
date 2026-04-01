@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import HeroSection from "./HeroSection";
 
 export default function LandingView() {
 
@@ -36,8 +35,20 @@ export default function LandingView() {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto space-y-10 sm:space-y-14">
-        {/* ── Hero Section ── */}
-        <HeroSection />
+        {/* ═══════════════════════════════════════
+            VIDEO SECTION
+        ═══════════════════════════════════════ */}
+        <div className="rounded-3xl overflow-hidden shadow-lg">
+          <video
+            autoPlay
+            loop
+            playsInline
+            className="w-full h-auto"
+          >
+            <source src="/home-page-vedio.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
 
         {/* ═══════════════════════════════════════
             EXPLORE MORE SECTIONS
@@ -78,8 +89,6 @@ export default function LandingView() {
           </div>
         </div>
       </div>
-
-      {/* HeroSection contains its own MicButton */}
     </section>
   );
 }

@@ -109,6 +109,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 - npm run build: Create production build
 - npm run start: Run production server
 - npm run lint: Run ESLint checks
+- npm run stack: Start frontend + Flask API + realtime bridge in one command
+
+## Realtime Smartwatch Stack (One Command)
+
+From the project root, run:
+
+```bash
+npm run stack
+```
+
+To target a specific smartwatch BLE address:
+
+```bash
+python launch_stack.py --device 14:EC:88:EF:8C:46
+```
 
 ## WhatsApp Reporting Flow
 

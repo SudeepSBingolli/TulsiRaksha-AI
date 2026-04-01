@@ -7,12 +7,24 @@ NUM_TO_RISK = {0: "LOW", 1: "NORMAL", 2: "HIGH"}
 
 app = Flask(__name__)
 CORS(app)
-model = joblib.load("model.pkl")
+model = None
+
+
+def load_model(model_path="model.pkl"):
+    global model
+    model = joblib.load(model_path)
+    return model
+
+
+load_model()
 
 
 @app.post("/predict")
 def predict():
     try:
+        if model is None:
+            return jsonify({"error": "Model not loaded"}), 503
+
         data = request.get_json(force=True)
 
         heart_rate = float(data["heart_rate"])
@@ -39,6 +51,15 @@ def predict():
         return jsonify({"error": f"Missing field: {exc}"}), 400
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
+
+
+@app.post("/reload-model")
+def reload_model():
+    try:
+        load_model("model.pkl")
+        return jsonify({"status": "ok", "message": "Model reloaded"})
+    except Exception as exc:
+        return jsonify({"status": "error", "error": str(exc)}), 500
 
 
 if __name__ == "__main__":

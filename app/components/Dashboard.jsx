@@ -55,7 +55,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
   };
 
   return (
-    <section className="relative px-4 sm:px-6 lg:px-8 pb-32 sm:pb-40">
+    <section className="relative px-4 sm:px-6 lg:px-8 pb-32 sm:pb-40 bg-gradient-to-b from-emerald-50/30 to-transparent">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <button
@@ -68,8 +68,8 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
           Back
         </button>
 
-        {/* Section Label */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-8 sm:mb-10">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-10 sm:mb-12">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -95,27 +95,31 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
           </div>
         </div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
-          {/* Left Column */}
-          <div className="lg:col-span-4 space-y-5 sm:space-y-6">
+        {/* Section 1: Greeting & Quick Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 mb-6">
+          <div className="lg:col-span-1">
             <GreetingCard demoActive={demoStep === "greeting"} userName={userName} />
-            <Checklist demoActive={demoStep === "checklist"} userId={userId} />
           </div>
-
-          {/* Center Column */}
-          <div className="lg:col-span-5 space-y-5 sm:space-y-6">
+          <div className="lg:col-span-2">
             <ActivityChart />
-            <HealthMetrics demoStep={demoStep} userName={userName} userId={userId} />
           </div>
+        </div>
 
-          {/* Right Column */}
-          <div className="lg:col-span-3 space-y-5 sm:space-y-6">
+        {/* Section 2: Health Metrics (Full Width) */}
+        <div className="mb-6">
+          <HealthMetrics demoStep={demoStep} userName={userName} userId={userId} />
+        </div>
+
+        {/* Section 3: Quick Actions & Voice Assistant */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 mb-6">
+          <div className="lg:col-span-1">
             <QuickActions
               demoActive={demoStep === "sos"}
               autoTriggerSos={demoStep === "sos"}
             />
-            <div className="bg-white rounded-3xl border border-emerald-100 p-6 sm:p-7 shadow-sm">
+          </div>
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-3xl border border-emerald-100 p-6 sm:p-7 shadow-sm h-full">
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">🎙️ Voice Assistant</h3>
               <VoiceAssistant
                 userName={userName}
@@ -124,7 +128,18 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
                 message={`Hi ${userName}! I'm here with you. How are you feeling today?`}
               />
             </div>
+          </div>
+          <div className="lg:col-span-1">
             <EmotionVoiceCompanion />
+          </div>
+        </div>
+
+        {/* Section 4: Checklist & Reminders */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+          <div>
+            <Checklist demoActive={demoStep === "checklist"} userId={userId} />
+          </div>
+          <div>
             <UpcomingReminders t={t} />
           </div>
         </div>

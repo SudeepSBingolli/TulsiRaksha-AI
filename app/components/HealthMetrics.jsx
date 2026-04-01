@@ -324,28 +324,9 @@ export default function HealthMetrics({ demoStep = "idle", userName = "Appa", us
   }, [familyPhone, whatsAppMessage]);
 
   useEffect(() => {
-    const shouldAutoOpen = riskLevel === "HIGH" && familyPhone && !autoOpenedWhatsApp.current;
-
-    if (!shouldAutoOpen) {
-      if (riskLevel !== "HIGH") {
-        autoOpenedWhatsApp.current = false;
-      }
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      const recipientPhone = normalizePhoneNumber(familyPhone);
-      if (!recipientPhone || typeof window === "undefined") return;
-
-      const message = whatsAppMessage;
-      const whatsappUrl = `https://wa.me/${recipientPhone}?text=${encodeURIComponent(message)}`;
-
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      setSendMessage("WhatsApp opened automatically with the report ready to send.");
-      autoOpenedWhatsApp.current = true;
-    }, 800);
-
-    return () => clearTimeout(timer);
+    // Disable auto-open to prevent continuous alerts
+    // Only manual user action should open WhatsApp
+    return;
   }, [familyPhone, riskLevel, whatsAppMessage]);
 
   useEffect(() => {
