@@ -1,3 +1,16 @@
 {
-  "version": 1
+  "version": 1,
+  "apps": [
+    {
+      "id": "tulsiraksha-ai",
+      "root": ".",
+      "platform": "capacitor",
+      "capacitor": {
+        "webDir": "out"
+      }
+    }
+  ],
+  "workflows": [],
+  "android": [],
+  "ios": []
 }
