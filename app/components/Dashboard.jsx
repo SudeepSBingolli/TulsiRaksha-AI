@@ -10,6 +10,7 @@ import QuickActions from "./QuickActions";
 import HealthMetrics from "./HealthMetrics";
 import EmotionVoiceCompanion from "./EmotionVoiceCompanion";
 import VoiceAssistant from "./VoiceAssistant";
+import WhatsAppNotify from "./WhatsAppNotify";
 import { useI18n } from "@/app/i18n";
 
 export default function Dashboard({ userName = "Appa", userId = null }) {
@@ -17,6 +18,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
   const { t } = useI18n();
   const [demoStep, setDemoStep] = useState("idle");
   const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [missedTasks, setMissedTasks] = useState([]);
 
   const stepLabel = useMemo(() => {
     const labels = {
@@ -126,13 +128,27 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
         </div>
 
         {/* ═══════════════════════════════════════
-            SECTION 3: DAILY TASKS
+            SECTION 3: DAILY TASKS + WHATSAPP ALERT
         ═══════════════════════════════════════ */}
         <div className="animate-in slide-in-from-bottom duration-500 delay-200">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             ✅ {t("checklist.title")}
           </h2>
-          <Checklist demoActive={demoStep === "checklist"} userId={userId} />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Checklist — sends missed tasks UP */}
+            <Checklist
+              demoActive={demoStep === "checklist"}
+              userId={userId}
+              onMissedTasksChange={setMissedTasks}
+            />
+
+            {/* WhatsApp Alert — receives missed tasks DOWN */}
+            <WhatsAppNotify
+              missedTasks={missedTasks}
+              patientName={userName}
+            />
+          </div>
         </div>
 
         {/* ═══════════════════════════════════════
