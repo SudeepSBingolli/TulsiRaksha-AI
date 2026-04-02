@@ -8,6 +8,10 @@
   <b>Voice-First Elder Care Assistant with Smart Health Monitoring, Family Alerts, and AI Risk Signaling</b>
 </p>
 
+## Live Deployment
+
+- Web App: https://tulsi-raksha-ai-git-main-sudeepsbingollis-projects.vercel.app/
+
 ## Demo Video
 
 <p align="center">
@@ -50,6 +54,67 @@ TulsiRaksha AI combines:
 - ML Service: Python, Flask, scikit-learn
 - Mobile Packaging: Capacitor Android
 - CI Packaging: Ionic Appflow
+
+## AI/ML Models Used
+
+### 1) Health Risk Prediction Model
+
+- Model: RandomForestClassifier (scikit-learn)
+- Training script: train_model.py
+- Saved artifact: model.pkl
+- Input features:
+  - heart_rate
+  - steps
+  - sleep
+  - medicine
+- Output classes:
+  - LOW
+  - NORMAL
+  - HIGH
+
+How it is used:
+
+- Trained in train_model.py with class balancing and 200 trees.
+- Loaded through Flask API (app.py) and API bridge files for realtime risk inference.
+
+### 2) Sentiment/Emotion Analysis Model
+
+- Model family: face-api.js pretrained models
+- Detection model: TinyFaceDetector
+- Expression model: FaceExpressionNet
+- Integration: app/components/EmotionDetectionPanel.jsx
+
+How it is used:
+
+- Webcam frames are analyzed periodically.
+- Expression probabilities are mapped into user-friendly emotional states.
+- Supportive-care actions are triggered via emotionContext.jsx when stress/sadness states are detected.
+
+Note:
+
+- This project currently uses facial expression based sentiment/emotion analysis.
+- It does not currently include a separate text sentiment classifier (like VADER/BERT/TextBlob) for chat text.
+
+### 3) Conversational AI Model
+
+- Provider: Cohere Chat API
+- Model: command-a-03-2025
+- Endpoint integration: app/api/assistant/route.js
+
+How it is used:
+
+- Generates elder-friendly conversational responses.
+- Includes fallback safe response mode when API key is not configured.
+
+### 4) Voice Synthesis Model
+
+- Provider: ElevenLabs
+- Model: eleven_multilingual_v2
+- Endpoint integration: app/api/voice/route.js and app/api/speak/route.js
+
+How it is used:
+
+- Converts assistant text replies to natural multilingual speech for accessibility.
 
 ## Repository Structure
 
