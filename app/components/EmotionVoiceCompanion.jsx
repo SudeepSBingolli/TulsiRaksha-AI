@@ -20,8 +20,6 @@ const AUTO_EMOTION_VOICE_TEXT = {
   Stressed: "You seem stressed right now. Let us pause, breathe deeply, and relax together.",
 };
 
-const AUTO_VOICE_COOLDOWN_MS = 12000;
-
 export default function EmotionVoiceCompanion() {
   const {
     emotion,
@@ -39,7 +37,6 @@ export default function EmotionVoiceCompanion() {
   const [lastMode, setLastMode] = useState("browser-tts");
   const [providerConfigured, setProviderConfigured] = useState(false);
   const lastAutoEmotionRef = useRef(null);
-  const lastAutoSpeakAtRef = useRef(0);
 
   const recentEmotionHistory = useMemo(() => {
     return [...emotionHistory].slice(-5).reverse();
@@ -81,15 +78,11 @@ export default function EmotionVoiceCompanion() {
   useEffect(() => {
     if (!emotion) return;
 
-    const now = Date.now();
     const hasEmotionChanged = lastAutoEmotionRef.current !== emotion;
-    const cooldownElapsed = now - lastAutoSpeakAtRef.current > AUTO_VOICE_COOLDOWN_MS;
-
-    if (!hasEmotionChanged && !cooldownElapsed) return;
+    if (!hasEmotionChanged) return;
 
     const autoMessage = AUTO_EMOTION_VOICE_TEXT[emotion] || AUTO_EMOTION_VOICE_TEXT.Neutral;
     lastAutoEmotionRef.current = emotion;
-    lastAutoSpeakAtRef.current = now;
     playVoice(autoMessage);
   }, [emotion, playVoice]);
 
