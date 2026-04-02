@@ -8,7 +8,6 @@ import Checklist from "./Checklist";
 import ActivityChart from "./ActivityChart";
 import QuickActions from "./QuickActions";
 import HealthMetrics from "./HealthMetrics";
-import EmotionVoiceCompanion from "./EmotionVoiceCompanion";
 import VoiceAssistant from "./VoiceAssistant";
 import WhatsAppNotify from "./WhatsAppNotify";
 import { useI18n } from "@/app/i18n";
@@ -181,17 +180,7 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
         </div>
 
         {/* ═══════════════════════════════════════
-            SECTION 5: EMOTION + FACE RECOGNITION
-        ═══════════════════════════════════════ */}
-        <div className="animate-in slide-in-from-bottom duration-500 delay-[350ms]">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            😊 Emotion & Face Recognition
-          </h2>
-          <EmotionVoiceCompanion />
-        </div>
-
-        {/* ═══════════════════════════════════════
-            SECTION 6: UPCOMING REMINDERS
+            SECTION 5: UPCOMING REMINDERS
         ═══════════════════════════════════════ */}
         <div className="animate-in slide-in-from-bottom duration-500 delay-400">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
