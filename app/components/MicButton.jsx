@@ -142,6 +142,10 @@ function detectTextLanguage(text, fallbackLang) {
 }
 
 export default function MicButton() {
+  const [browserLangCode] = useState(() => {
+    if (typeof window === "undefined") return "en";
+    return (navigator.language || "en").toLowerCase().split("-")[0];
+  });
   const [preferredLang] = useState(() => {
     if (typeof window === "undefined") return "kn-IN";
 
@@ -160,7 +164,12 @@ export default function MicButton() {
   const [transcript, setTranscript] = useState("");
   const [responseText, setResponseText] = useState("");
   const [micError, setMicError] = useState("");
-  const [recognitionLang, setRecognitionLang] = useState(preferredLang);
+  const [recognitionLang, setRecognitionLang] = useState(() => {
+    // Kannada recognition has weaker browser support in Web Speech.
+    // Prefer Hindi/English for recognition while still replying in preferred language.
+    if (browserLangCode === "hi") return "hi-IN";
+    return "en-US";
+  });
   const [showRetry, setShowRetry] = useState(false);
   const [offlineVoiceMode, setOfflineVoiceMode] = useState(false);
   const [networkErrorCount, setNetworkErrorCount] = useState(0);
@@ -360,16 +369,8 @@ export default function MicButton() {
       if (event.error === "network") {
         const nextCount = networkErrorCount + 1;
         setNetworkErrorCount(nextCount);
+        setIsListening(false);
         setShowRetry(true);
-
-        if (nextCount >= 2) {
-          setOfflineVoiceMode(true);
-          setIsListening(false);
-          setMicError(
-            "Speech network is unavailable on this browser. Offline Voice Mode is active — use quick buttons or type a command below."
-          );
-          return;
-        }
 
         // Fallback to a stable recognition language after network failures
         // while preserving multilingual voice replies.
@@ -377,6 +378,14 @@ export default function MicButton() {
           setRecognitionLang("en-US");
           setMicError(
             "Network issue in current language. Switched mic recognition to English for stability. Tap Retry."
+          );
+          return;
+        }
+
+        if (nextCount >= 2) {
+          setOfflineVoiceMode(true);
+          setMicError(
+            "Speech service is unstable on this browser. Voice may fail sometimes; use Retry Mic or quick buttons below."
           );
           return;
         }
@@ -400,14 +409,6 @@ export default function MicButton() {
   }, [handleCommand, networkErrorCount, recognitionLang]);
 
   const startListening = () => {
-    if (offlineVoiceMode) {
-      setMicError(
-        "Offline Voice Mode is active. Use quick buttons or typed command below."
-      );
-      setShowPanel(true);
-      return;
-    }
-
     if (!recognitionRef.current) {
       setMicError("Microphone is not supported in this browser.");
       return;
@@ -415,6 +416,7 @@ export default function MicButton() {
 
     try {
       setMicError("");
+      setOfflineVoiceMode(false);
       setShowRetry(false);
       setTranscript("");
       setResponseText("");
@@ -575,10 +577,8 @@ export default function MicButton() {
                 <div className="mt-3 flex justify-center">
                   <button
                     onClick={() => {
-                      if (offlineVoiceMode) {
-                        setOfflineVoiceMode(false);
-                        setNetworkErrorCount(0);
-                      }
+                      setOfflineVoiceMode(false);
+                      setNetworkErrorCount(0);
                       stopListening();
                       setTimeout(() => {
                         setShowPanel(true);

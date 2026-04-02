@@ -10,11 +10,16 @@ const EMOTION_META = {
   Sad: { emoji: "😔", color: "text-blue-700", bg: "bg-blue-50" },
   Depressed: { emoji: "😞", color: "text-indigo-700", bg: "bg-indigo-50" },
   Stressed: { emoji: "😣", color: "text-amber-700", bg: "bg-amber-50" },
+  Happy: { emoji: "🙂", color: "text-emerald-700", bg: "bg-emerald-50" },
   Neutral: { emoji: "😐", color: "text-gray-700", bg: "bg-gray-100" },
 };
 
 function mapExpressionToEmotion(expressions) {
-  if (!expressions) return "Neutral";
+  if (!expressions) return { emotion: "Neutral", topExpression: "none", confidence: 0 };
+
+  const entries = Object.entries(expressions || {});
+  const [topExpression, confidence] =
+    entries.sort((a, b) => Number(b[1]) - Number(a[1]))[0] || ["none", 0];
 
   const sadScore = Number(expressions.sad || 0);
   const stressScore = Math.max(
@@ -22,11 +27,15 @@ function mapExpressionToEmotion(expressions) {
     Number(expressions.fearful || 0),
     Number(expressions.disgusted || 0)
   );
+  const happyScore = Number(expressions.happy || 0);
 
-  if (sadScore >= 0.72) return "Depressed";
-  if (sadScore >= 0.35) return "Sad";
-  if (stressScore >= 0.4) return "Stressed";
-  return "Neutral";
+  let emotion = "Neutral";
+  if (sadScore >= 0.6) emotion = "Depressed";
+  else if (sadScore >= 0.28) emotion = "Sad";
+  else if (stressScore >= 0.3) emotion = "Stressed";
+  else if (happyScore >= 0.45) emotion = "Happy";
+
+  return { emotion, topExpression, confidence: Number(confidence || 0) };
 }
 
 export default function EmotionDetectionPanel({ onEmotionChange }) {
@@ -37,6 +46,7 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
   const [cameraReady, setCameraReady] = useState(false);
   const [fallbackMode, setFallbackMode] = useState(false);
   const [error, setError] = useState("");
+  const [expressionInfo, setExpressionInfo] = useState({ topExpression: "none", confidence: 0 });
   const [retryKey, setRetryKey] = useState(0);
 
   const meta = useMemo(() => EMOTION_META[emotion] || EMOTION_META.Neutral, [emotion]);
@@ -127,18 +137,19 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
             const detection = await faceapi
               .detectSingleFace(
                 videoRef.current,
-                new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 })
+                new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 })
               )
               .withFaceExpressions();
 
-            const nextEmotion = mapExpressionToEmotion(detection?.expressions);
-            setEmotion(nextEmotion);
-            updateEmotion(nextEmotion, "camera");
-            onEmotionChange?.(nextEmotion);
+            const mapped = mapExpressionToEmotion(detection?.expressions);
+            setEmotion(mapped.emotion);
+            setExpressionInfo({ topExpression: mapped.topExpression, confidence: mapped.confidence });
+            updateEmotion(mapped.emotion, "camera");
+            onEmotionChange?.(mapped.emotion);
           } catch {
             // Keep panel responsive even if a frame fails.
           }
-        }, 1400);
+        }, 900);
       } catch {
         startFallback("Emotion model load failed. Running in demo fallback mode.");
       }
@@ -176,6 +187,11 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
         <p className={`text-lg font-semibold ${meta.color}`}>
           Emotion: {emotion} {meta.emoji}
         </p>
+        {!fallbackMode && (
+          <p className="text-xs text-gray-500 mt-1">
+            Detected: {expressionInfo.topExpression} ({Math.round(expressionInfo.confidence * 100)}%)
+          </p>
+        )}
         <p className="text-xs text-gray-500 mt-1">
           {modelReady && cameraReady && !fallbackMode
             ? "ML model + camera active"
