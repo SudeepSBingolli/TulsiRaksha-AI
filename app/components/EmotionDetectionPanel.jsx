@@ -1,30 +1,37 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useEmotionContext } from "@/context/emotionContext";
 
 const MODEL_URL =
   "https://justadudewhohacks.github.io/face-api.js/models";
 
 const EMOTION_META = {
-  Happy: { emoji: "😊", color: "text-emerald-700", bg: "bg-emerald-50" },
   Sad: { emoji: "😔", color: "text-blue-700", bg: "bg-blue-50" },
+  Depressed: { emoji: "😞", color: "text-indigo-700", bg: "bg-indigo-50" },
+  Stressed: { emoji: "😣", color: "text-amber-700", bg: "bg-amber-50" },
   Neutral: { emoji: "😐", color: "text-gray-700", bg: "bg-gray-100" },
-  Angry: { emoji: "😠", color: "text-red-700", bg: "bg-red-50" },
 };
 
 function mapExpressionToEmotion(expressions) {
   if (!expressions) return "Neutral";
 
-  const dominant = Object.entries(expressions).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const sadScore = Number(expressions.sad || 0);
+  const stressScore = Math.max(
+    Number(expressions.angry || 0),
+    Number(expressions.fearful || 0),
+    Number(expressions.disgusted || 0)
+  );
 
-  if (dominant === "happy") return "Happy";
-  if (dominant === "sad") return "Sad";
-  if (dominant === "angry") return "Angry";
+  if (sadScore >= 0.72) return "Depressed";
+  if (sadScore >= 0.35) return "Sad";
+  if (stressScore >= 0.4) return "Stressed";
   return "Neutral";
 }
 
 export default function EmotionDetectionPanel({ onEmotionChange }) {
   const videoRef = useRef(null);
+  const { updateEmotion } = useEmotionContext();
   const [emotion, setEmotion] = useState("Neutral");
   const [modelReady, setModelReady] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
@@ -44,9 +51,10 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
       if (message) setError(message);
 
       intervalId = window.setInterval(() => {
-        const samples = ["Neutral", "Happy", "Sad", "Neutral", "Happy", "Angry"];
+        const samples = ["Neutral", "Neutral", "Sad", "Stressed", "Depressed"];
         const nextEmotion = samples[Math.floor(Math.random() * samples.length)];
         setEmotion(nextEmotion);
+        updateEmotion(nextEmotion, "fallback");
         onEmotionChange?.(nextEmotion);
       }, 3000);
     }
@@ -125,6 +133,7 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
 
             const nextEmotion = mapExpressionToEmotion(detection?.expressions);
             setEmotion(nextEmotion);
+            updateEmotion(nextEmotion, "camera");
             onEmotionChange?.(nextEmotion);
           } catch {
             // Keep panel responsive even if a frame fails.
@@ -144,7 +153,7 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [onEmotionChange, retryKey]);
+  }, [onEmotionChange, retryKey, updateEmotion]);
 
   return (
     <div className="bg-white rounded-3xl border border-emerald-100 p-5 sm:p-6 shadow-sm">

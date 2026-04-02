@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/app/i18n";
 import { supabase } from "@/lib/supabaseClient";
+import { useEmotionContext } from "@/context/emotionContext";
+
+const FAMILY_VOICE_LABELS = {
+  mother: "Mother",
+  father: "Father",
+  son: "Son",
+};
 
 export default function VoiceAssistant({
   userName = "Friend",
@@ -11,12 +18,15 @@ export default function VoiceAssistant({
   message = null,
 }) {
   const { t } = useI18n();
+  const { supportTrigger, familyVoice, isSupportiveEmotion } = useEmotionContext();
   const audioRef = useRef(null);
+  const playRequestRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(100);
   const [displayText, setDisplayText] = useState(message || "");
   const [voicePreferences, setVoicePreferences] = useState(null);
+  const [nowPlayingVoiceLabel, setNowPlayingVoiceLabel] = useState(FAMILY_VOICE_LABELS[familyVoice]);
 
   // Fetch user's voice preferences on mount
   useEffect(() => {
@@ -53,8 +63,32 @@ export default function VoiceAssistant({
     fetchVoicePreferences();
   }, [userId]);
 
+  // Browser speech synthesis fallback
+  const playBrowserSpeechFallback = useCallback((text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = volume / 100;
+      utterance.onend = () => setIsPlaying(false);
+      utterance.onstart = () => setIsPlaying(true);
+      utterance.onerror = () => {
+        setIsPlaying(false);
+        setIsLoading(false);
+      };
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      setIsPlaying(true);
+      setIsLoading(false);
+    } else {
+      console.error("Speech synthesis not supported in this browser");
+      setIsLoading(false);
+    }
+  }, [volume]);
+
   // Generate and play voice
-  const generateAndPlayVoice = async (textToSpeak) => {
+  const generateAndPlayVoice = useCallback(async (textToSpeak) => {
     if (!textToSpeak) return;
 
     setIsLoading(true);
@@ -78,41 +112,55 @@ export default function VoiceAssistant({
         const audioUrl = URL.createObjectURL(audioBlob);
 
         if (audioRef.current) {
+          const requestId = ++playRequestRef.current;
+
+          // Stop previous playback before switching source to avoid race conditions.
+          try {
+            audioRef.current.pause();
+          } catch {
+            // Ignore pause issues when nothing is currently playing.
+          }
+
           audioRef.current.src = audioUrl;
           audioRef.current.volume = volume / 100;
-          audioRef.current.play();
-          setIsPlaying(true);
+          try {
+            await audioRef.current.play();
+            if (requestId === playRequestRef.current) {
+              setIsPlaying(true);
+            }
+          } catch (playError) {
+            // Browser may interrupt play() if a newer request replaces the source.
+            if (playError?.name !== "AbortError") {
+              console.warn("Audio play failed, using browser fallback:", playError);
+              playBrowserSpeechFallback(textToSpeak);
+            }
+          }
         }
       } else {
         // ElevenLabs failed, use browser fallback
         console.warn("ElevenLabs API failed, using browser speech synthesis fallback");
-        useBrowserSpeechSynthesis(textToSpeak);
+        playBrowserSpeechFallback(textToSpeak);
       }
     } catch (error) {
       console.warn("Voice generation error, using browser fallback:", error);
       // Fallback to browser speech synthesis
-      useBrowserSpeechSynthesis(textToSpeak);
-    }
-  };
-
-  // Browser speech synthesis fallback
-  const useBrowserSpeechSynthesis = (text) => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.volume = volume / 100;
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onstart = () => setIsPlaying(true);
-
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-      setIsPlaying(true);
-    } else {
-      console.error("Speech synthesis not supported in this browser");
+      playBrowserSpeechFallback(textToSpeak);
+    } finally {
       setIsLoading(false);
     }
-  };
+  }, [playBrowserSpeechFallback, voicePreferences?.custom_voice_id, voicePreferences?.voice_id, volume]);
+
+  useEffect(() => {
+    const nextVoice = FAMILY_VOICE_LABELS[familyVoice] || "Family";
+    setNowPlayingVoiceLabel(nextVoice);
+  }, [familyVoice]);
+
+  useEffect(() => {
+    if (!supportTrigger?.id) return;
+    const baseMessage = supportTrigger.message || "We noticed you might be feeling low ❤️";
+    const personalized = `${baseMessage} ${nowPlayingVoiceLabel} voice is with you now.`;
+    generateAndPlayVoice(personalized);
+  }, [generateAndPlayVoice, nowPlayingVoiceLabel, supportTrigger?.id, supportTrigger?.message]);
 
   // Auto-play greeting on component mount if enabled
   useEffect(() => {
@@ -122,7 +170,7 @@ export default function VoiceAssistant({
         `Hi ${userName}! I am here with you. How are you feeling today?`;
       generateAndPlayVoice(greeting);
     }
-  }, [autoPlay, voicePreferences, userName, isPlaying, message]);
+  }, [autoPlay, voicePreferences, userName, isPlaying, message, generateAndPlayVoice]);
 
   // Handle audio end
   const handleAudioEnd = () => {
@@ -136,8 +184,14 @@ export default function VoiceAssistant({
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play();
-      setIsPlaying(true);
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((error) => {
+          if (error?.name !== "AbortError") {
+            console.warn("Manual play failed:", error);
+          }
+        });
     }
   };
 
@@ -167,8 +221,11 @@ export default function VoiceAssistant({
 
       {/* Voice Display Text */}
       {displayText && (
-        <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100">
+        <div className={`p-4 rounded-2xl border border-emerald-100 transition-all ${isSupportiveEmotion ? "bg-emerald-100/60 animate-pulse" : "bg-emerald-50/50"}`}>
           <p className="text-sm text-gray-700 leading-relaxed">{displayText}</p>
+          <p className="mt-2 text-xs text-emerald-700 font-medium">
+            Playing family voice: {nowPlayingVoiceLabel}
+          </p>
         </div>
       )}
 
