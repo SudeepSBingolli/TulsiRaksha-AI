@@ -20,6 +20,28 @@ from smartwatch_bt_fetcher import GadgetbridgeBLEDataFetcher
 from train_model import train_model
 
 
+def _load_local_env_files():
+    """Load simple KEY=VALUE pairs from .env.local/.env for bridge runtime."""
+    for env_path in (".env.local", ".env"):
+        if not os.path.exists(env_path):
+            continue
+
+        try:
+            with open(env_path, "r", encoding="utf-8") as f:
+                for raw_line in f:
+                    line = raw_line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    if key and key not in os.environ:
+                        os.environ[key] = value
+        except Exception:
+            # Best-effort loader; explicit shell env vars still work.
+            pass
+
+
 def infer_risk(heart_rate, steps, sleep, medicine):
     if heart_rate > 110 and steps < 2500 and sleep < 5.5:
         return "HIGH"
@@ -46,6 +68,8 @@ class RealtimeTrainingBridge:
         min_train_rows,
         start_api,
     ):
+        _load_local_env_files()
+
         self.dataset_path = dataset_path
         self.model_path = model_path
         self.api_base_url = api_base_url.rstrip("/")
@@ -62,6 +86,12 @@ class RealtimeTrainingBridge:
         self.samples_since_retrain = 0
         self.last_valid_heart_rate = 72
 
+        self.supabase_url = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+        self.supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+        self.supabase_table = os.getenv("SUPABASE_HEALTH_TABLE", "health_samples").strip() or "health_samples"
+        self.supabase_enabled = bool(self.supabase_url and self.supabase_key)
+        self._supabase_warned = False
+
     def _ensure_dataset(self):
         file_exists = os.path.exists(self.dataset_path)
         if not file_exists:
@@ -77,9 +107,44 @@ class RealtimeTrainingBridge:
         return max(0, row_count - 1)
 
     def _append_row(self, heart_rate, steps, sleep, medicine, risk):
+        sample_timestamp = datetime.now().isoformat()
         with open(self.dataset_path, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow([heart_rate, steps, sleep, medicine, risk, datetime.now().isoformat()])
+            writer.writerow([heart_rate, steps, sleep, medicine, risk, sample_timestamp])
+        return sample_timestamp
+
+    def _save_to_supabase(self, heart_rate, steps, sleep, medicine, risk, sample_timestamp):
+        if not self.supabase_enabled:
+            if not self._supabase_warned:
+                print("[DB] Supabase is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to enable DB writes.")
+                self._supabase_warned = True
+            return False
+
+        endpoint = f"{self.supabase_url}/rest/v1/{self.supabase_table}"
+        headers = {
+            "apikey": self.supabase_key,
+            "Authorization": f"Bearer {self.supabase_key}",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal",
+        }
+        payload = {
+            "heart_rate": int(heart_rate),
+            "steps": int(steps),
+            "sleep_hours": float(sleep),
+            "medicine": int(medicine),
+            "risk": str(risk),
+            "sample_timestamp": sample_timestamp,
+        }
+
+        try:
+            response = requests.post(endpoint, json=payload, headers=headers, timeout=8)
+            if 200 <= response.status_code < 300:
+                return True
+            print(f"[DB] Supabase insert failed: {response.status_code} {response.text[:180]}")
+            return False
+        except Exception as exc:
+            print(f"[DB] Supabase insert error: {exc}")
+            return False
 
     def _predict_live(self, payload):
         try:
@@ -194,12 +259,20 @@ class RealtimeTrainingBridge:
                     payload["sleep"],
                     payload["medicine"],
                 )
-                self._append_row(
+                sample_timestamp = self._append_row(
                     payload["heart_rate"],
                     payload["steps"],
                     payload["sleep"],
                     payload["medicine"],
                     pseudo_risk,
+                )
+                db_saved = self._save_to_supabase(
+                    payload["heart_rate"],
+                    payload["steps"],
+                    payload["sleep"],
+                    payload["medicine"],
+                    pseudo_risk,
+                    sample_timestamp,
                 )
 
                 api_risk = self._predict_live(payload)
@@ -208,7 +281,7 @@ class RealtimeTrainingBridge:
 
                 print(
                     f"[#{collected}] HR={heart_rate} Steps={steps} Batt={battery}% "
-                    f"Label={pseudo_risk} API={api_risk}"
+                    f"Label={pseudo_risk} API={api_risk} DB={'OK' if db_saved else 'SKIP'}"
                 )
 
                 self._maybe_retrain()
