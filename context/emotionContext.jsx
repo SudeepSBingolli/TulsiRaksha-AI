@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 
 const VOICE_OPTIONS = [
   { id: "mother", label: "Mother" },
@@ -18,22 +18,25 @@ const SUPPORTIVE_EMOTIONS = new Set(["Sad", "Depressed", "Stressed"]);
 
 const EmotionContext = createContext(null);
 
+const MAX_HISTORY = 50;
+
 export function EmotionProvider({ children }) {
   const [emotion, setEmotion] = useState("Neutral");
   const [emotionHistory, setEmotionHistory] = useState([]);
   const [familyVoice, setFamilyVoice] = useState("mother");
   const [supportTrigger, setSupportTrigger] = useState(null);
+  const triggerIdRef = useRef(0);
 
   const updateEmotion = useCallback((newEmotion, source = "camera") => {
     setEmotion(newEmotion);
-    setEmotionHistory((prev) => [
-      ...prev,
-      { emotion: newEmotion, timestamp: Date.now(), source },
-    ]);
+    setEmotionHistory((prev) => {
+      const updated = [...prev, { emotion: newEmotion, timestamp: Date.now(), source }];
+      return updated.length > MAX_HISTORY ? updated.slice(-MAX_HISTORY) : updated;
+    });
 
     if (SUPPORTIVE_EMOTIONS.has(newEmotion)) {
       setSupportTrigger({
-        id: Date.now(),
+        id: ++triggerIdRef.current,
         message: SUPPORT_MESSAGES[newEmotion] || "We are here for you. ❤️",
       });
     }
