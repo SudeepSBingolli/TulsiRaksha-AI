@@ -55,72 +55,105 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
   };
 
   return (
-    <section className="relative px-4 sm:px-6 lg:px-8 pb-32 sm:pb-40 bg-gradient-to-b from-emerald-50/30 to-transparent">
-      <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="mb-6 flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </button>
+    <section className="relative px-4 sm:px-6 lg:px-8 py-6 sm:py-8 bg-gradient-to-b from-emerald-50/30 via-white to-white">
+      {/* ── Background decorations ── */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-emerald-100/20 blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-emerald-50/30 blur-3xl" />
+      </div>
 
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-10 sm:mb-12">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-8 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              {t("dashboard.title")}
-            </h2>
-          </div>
+      <div className="relative z-10 max-w-6xl mx-auto space-y-8 sm:space-y-10">
+        {/* ═══════════════════════════════════════
+            HEADER SECTION
+        ═══════════════════════════════════════ */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
+          {/* Back Button */}
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-base sm:text-lg font-semibold text-gray-600 hover:text-emerald-600 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
 
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-sm text-gray-500 font-medium">
-              {t("dashboard.demoLabel")} {stepLabel}
-            </span>
+          {/* Demo Runner */}
+          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm">
+            <span className="text-sm text-gray-500 hidden md:block">{t("dashboard.demoLabel")}</span>
+            <span className="text-sm text-emerald-600 font-bold truncate max-w-[120px]">{stepLabel}</span>
             <button
               onClick={startDemo}
               disabled={isDemoRunning}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-colors ${
+              className={`px-5 py-2 rounded-xl text-base font-bold transition-all ${
                 isDemoRunning
-                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                  : "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600"
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-lg"
               }`}
             >
-              {isDemoRunning ? t("dashboard.runningDemo") : t("dashboard.runDemo")}
+              {isDemoRunning ? "⏳" : "▶️"} {t("dashboard.runDemo")}
             </button>
           </div>
         </div>
 
-        {/* Section 1: Greeting & Quick Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 mb-6">
-          <div className="lg:col-span-1">
-            <GreetingCard demoActive={demoStep === "greeting"} userName={userName} />
+        {/* ═══════════════════════════════════════
+            SECTION 1: WELCOME
+        ═══════════════════════════════════════ */}
+        <div className="animate-in slide-in-from-bottom duration-500">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            👋 {t("dashboard.title")}
+          </h2>
+          <GreetingCard demoActive={demoStep === "greeting"} userName={userName} />
+        </div>
+
+        {/* ═══════════════════════════════════════
+            SECTION 2: HEALTH STATUS
+        ═══════════════════════════════════════ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-bottom duration-500 delay-100">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              ❤️ {t("health.liveStatus")}
+            </h2>
+            <HealthMetrics demoStep={demoStep} userName={userName} userId={userId} />
           </div>
-          <div className="lg:col-span-2">
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              📊 {t("footer.features")}
+            </h2>
             <ActivityChart />
           </div>
         </div>
 
-        {/* Section 2: Health Metrics (Full Width) */}
-        <div className="mb-6">
-          <HealthMetrics demoStep={demoStep} userName={userName} userId={userId} />
+        {/* ═══════════════════════════════════════
+            SECTION 3: DAILY TASKS
+        ═══════════════════════════════════════ */}
+        <div className="animate-in slide-in-from-bottom duration-500 delay-200">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            ✅ {t("checklist.title")}
+          </h2>
+          <Checklist demoActive={demoStep === "checklist"} userId={userId} />
         </div>
 
-        {/* Section 3: Quick Actions & Voice Assistant */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 mb-6">
-          <div className="lg:col-span-1">
+        {/* ═══════════════════════════════════════
+            SECTION 4: QUICK HELP & VOICE
+        ═══════════════════════════════════════ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-bottom duration-500 delay-300">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              🚨 {t("quickActions.title")}
+            </h2>
             <QuickActions
               demoActive={demoStep === "sos"}
               autoTriggerSos={demoStep === "sos"}
             />
           </div>
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl border border-emerald-100 p-6 sm:p-7 shadow-sm h-full">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">🎙️ Voice Assistant</h3>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              🎙️ Voice Assistant
+            </h2>
+            <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-200/60 rounded-3xl p-6 sm:p-7 shadow-sm">
               <VoiceAssistant
                 userName={userName}
                 userId={userId}
@@ -129,19 +162,16 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
               />
             </div>
           </div>
-          <div className="lg:col-span-1">
-            <EmotionVoiceCompanion />
-          </div>
         </div>
 
-        {/* Section 4: Checklist & Reminders */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
-          <div>
-            <Checklist demoActive={demoStep === "checklist"} userId={userId} />
-          </div>
-          <div>
-            <UpcomingReminders t={t} />
-          </div>
+        {/* ═══════════════════════════════════════
+            SECTION 5: UPCOMING REMINDERS
+        ═══════════════════════════════════════ */}
+        <div className="animate-in slide-in-from-bottom duration-500 delay-400">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            ⏰ {t("dashboard.upcoming")}
+          </h2>
+          <UpcomingReminders t={t} />
         </div>
       </div>
     </section>
@@ -159,7 +189,7 @@ function UpcomingReminders({ t }) {
     {
       time: "11:00 AM",
       label: t("dashboard.reminderDoctorCall"),
-      icon: "👨‍⚕️",
+      icon: "👨‍️",
       status: "upcoming",
     },
     {
@@ -177,32 +207,30 @@ function UpcomingReminders({ t }) {
   ];
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 p-6 sm:p-7 shadow-sm">
+    <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-lg shadow-gray-100/50">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900">
-          {t("dashboard.upcoming")}
-        </h3>
-        <button className="text-sm text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
-          {t("dashboard.viewAll")}
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{t("dashboard.upcoming")}</h3>
+        <button className="text-base text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+          {t("dashboard.viewAll")} →
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {reminders.map((reminder, idx) => (
           <div
             key={idx}
-            className={`flex items-center gap-3.5 p-3.5 rounded-2xl transition-colors ${
+            className={`flex items-center gap-4 p-5 rounded-2xl transition-all hover:scale-[1.01] ${
               reminder.status === "done"
-                ? "bg-emerald-50/50 opacity-60"
+                ? "bg-emerald-50 border-2 border-emerald-100 opacity-70"
                 : reminder.status === "upcoming"
-                ? "bg-amber-50 border border-amber-100"
-                : "bg-gray-50 hover:bg-gray-100"
+                ? "bg-amber-50 border-2 border-amber-200 shadow-sm"
+                : "bg-white border-2 border-gray-100 hover:border-emerald-200 hover:shadow-md"
             }`}
           >
-            <span className="text-xl flex-shrink-0">{reminder.icon}</span>
+            <span className="text-3xl flex-shrink-0">{reminder.icon}</span>
             <div className="flex-1 min-w-0">
               <p
-                className={`text-sm font-semibold truncate ${
+                className={`text-base sm:text-lg font-bold ${
                   reminder.status === "done"
                     ? "text-gray-400 line-through"
                     : "text-gray-800"
@@ -210,19 +238,20 @@ function UpcomingReminders({ t }) {
               >
                 {reminder.label}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{reminder.time}</p>
+              <p className="text-sm text-gray-500 mt-1">{reminder.time}</p>
             </div>
             {reminder.status === "done" && (
-              <svg
-                className="w-5 h-5 text-emerald-500 flex-shrink-0"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-              </svg>
+              <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              </div>
             )}
             {reminder.status === "upcoming" && (
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
+              <div className="w-4 h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />
+            )}
+            {reminder.status === "pending" && (
+              <div className="w-4 h-4 rounded-full bg-gray-300 flex-shrink-0" />
             )}
           </div>
         ))}

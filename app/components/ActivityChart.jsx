@@ -1,20 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/app/i18n";
 
 export default function ActivityChart() {
-  const [activeRange, setActiveRange] = useState("Week");
-  const ranges = ["Day", "Week", "Month"];
+  const { t } = useI18n();
+  const [activeRange, setActiveRange] = useState("week");
 
-  // Weekly data points
+  const ranges = [
+    { key: "day", label: t("activity.day") },
+    { key: "week", label: t("activity.week") },
+    { key: "month", label: t("activity.month") },
+  ];
+
   const data = [
-    { day: "Mon", value: 65, steps: "4.2k" },
-    { day: "Tue", value: 78, steps: "5.1k" },
-    { day: "Wed", value: 45, steps: "2.9k" },
-    { day: "Thu", value: 88, steps: "5.8k" },
-    { day: "Fri", value: 72, steps: "4.7k" },
-    { day: "Sat", value: 92, steps: "6.1k" },
-    { day: "Sun", value: 58, steps: "3.8k" },
+    { day: t("activity.mon"), value: 65, steps: "4.2k" },
+    { day: t("activity.tue"), value: 78, steps: "5.1k" },
+    { day: t("activity.wed"), value: 45, steps: "2.9k" },
+    { day: t("activity.thu"), value: 88, steps: "5.8k" },
+    { day: t("activity.fri"), value: 72, steps: "4.7k" },
+    { day: t("activity.sat"), value: 92, steps: "6.1k" },
+    { day: t("activity.sun"), value: 58, steps: "3.8k" },
   ];
 
   const maxValue = 100;
@@ -30,7 +36,6 @@ export default function ActivityChart() {
     y: paddingY + usableHeight - (d.value / maxValue) * usableHeight,
   }));
 
-  // Generate smooth curve path
   const generateSmoothPath = (pts) => {
     if (pts.length < 2) return "";
     let path = `M ${pts[0].x} ${pts[0].y}`;
@@ -52,24 +57,24 @@ export default function ActivityChart() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Weekly Activity
+            {t("activity.title")}
           </h3>
           <p className="text-sm sm:text-base text-gray-400 mt-1">
-            Steps & movement tracking
+            {t("activity.subtitle")}
           </p>
         </div>
         <div className="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100 self-start sm:self-auto">
           {ranges.map((range) => (
             <button
-              key={range}
-              onClick={() => setActiveRange(range)}
+              key={range.key}
+              onClick={() => setActiveRange(range.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                activeRange === range
+                activeRange === range.key
                   ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
-              {range}
+              {range.label}
             </button>
           ))}
         </div>
@@ -79,15 +84,21 @@ export default function ActivityChart() {
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-emerald-50 rounded-2xl p-3.5 sm:p-4 text-center">
           <p className="text-2xl sm:text-3xl font-bold text-emerald-700">4.7k</p>
-          <p className="text-xs sm:text-sm text-emerald-600 mt-0.5">Avg Steps</p>
+          <p className="text-xs sm:text-sm text-emerald-600 mt-0.5">
+            {t("activity.avgSteps")}
+          </p>
         </div>
         <div className="bg-blue-50 rounded-2xl p-3.5 sm:p-4 text-center">
           <p className="text-2xl sm:text-3xl font-bold text-blue-700">86%</p>
-          <p className="text-xs sm:text-sm text-blue-600 mt-0.5">Goal Met</p>
+          <p className="text-xs sm:text-sm text-blue-600 mt-0.5">
+            {t("activity.goalMet")}
+          </p>
         </div>
         <div className="bg-amber-50 rounded-2xl p-3.5 sm:p-4 text-center">
           <p className="text-2xl sm:text-3xl font-bold text-amber-700">5</p>
-          <p className="text-xs sm:text-sm text-amber-600 mt-0.5">Day Streak</p>
+          <p className="text-xs sm:text-sm text-amber-600 mt-0.5">
+            {t("activity.dayStreak")}
+          </p>
         </div>
       </div>
 
@@ -119,7 +130,8 @@ export default function ActivityChart() {
 
           {/* Horizontal grid lines */}
           {[0, 25, 50, 75, 100].map((val) => {
-            const y = paddingY + usableHeight - (val / maxValue) * usableHeight;
+            const y =
+              paddingY + usableHeight - (val / maxValue) * usableHeight;
             return (
               <g key={val}>
                 <line
@@ -160,12 +172,7 @@ export default function ActivityChart() {
                 stroke="#10b981"
                 strokeWidth="3"
               />
-              <circle
-                cx={point.x}
-                cy={point.y}
-                r="3"
-                fill="#10b981"
-              />
+              <circle cx={point.x} cy={point.y} r="3" fill="#10b981" />
               {/* Day labels */}
               <text
                 x={point.x}

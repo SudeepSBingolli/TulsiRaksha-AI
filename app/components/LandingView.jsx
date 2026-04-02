@@ -1,26 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/app/i18n";
 
 export default function LandingView() {
+  const { t } = useI18n();
 
   const exploreOptions = [
     {
       icon: "🎙️",
-      title: "AI Assistant",
-      desc: "Talk to your AI health companion",
+      title: t("landing.exploreAiTitle"),
+      desc: t("landing.exploreAiDesc"),
       href: "/assistant",
     },
     {
       icon: "❤️",
-      title: "Health Monitor",
-      desc: "Track your vitals in real-time",
+      title: t("landing.exploreHealthTitle"),
+      desc: t("landing.exploreHealthDesc"),
       href: "/health",
     },
     {
       icon: "👨‍👩‍👧",
-      title: "Family Sync",
-      desc: "Connect with your family",
+      title: t("landing.exploreFamilyTitle"),
+      desc: t("landing.exploreFamilyDesc"),
       href: "/family-sync",
     },
   ];
@@ -46,7 +48,7 @@ export default function LandingView() {
             className="w-full h-auto"
           >
             <source src="/home-page-vedio.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+            {t("landing.videoNotSupported")}
           </video>
         </div>
 
@@ -56,10 +58,10 @@ export default function LandingView() {
         <div className="space-y-6">
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-              Explore More
+              {t("landing.exploreTitle")}
             </h2>
             <p className="text-gray-600 text-lg">
-              Learn more about TulsiRaksha and find what&apos;s right for you
+              {t("landing.exploreSubtitle")}
             </p>
           </div>
 
@@ -81,7 +83,7 @@ export default function LandingView() {
                     {option.desc}
                   </p>
                   <div className="inline-flex items-center gap-2 text-emerald-600 font-semibold group-hover:gap-3 transition-all">
-                    Learn more <span>→</span>
+                    {t("landing.learnMore")} <span>→</span>
                   </div>
                 </div>
               </Link>
