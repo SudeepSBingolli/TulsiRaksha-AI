@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import EmotionDetectionPanel from "./EmotionDetectionPanel";
 import VoicePersonalizationPanel from "./VoicePersonalizationPanel";
 import MicButton from "./MicButton";
@@ -11,6 +11,16 @@ import {
 import { useEmotionContext } from "@/context/emotionContext";
 
 const SAD_COMFORT_TEXT = "You are not alone. I am with you. Please take a deep breath. ❤️";
+
+const AUTO_EMOTION_VOICE_TEXT = {
+  Neutral: "You look calm and steady. Keep breathing comfortably. I am with you.",
+  Happy: "You look happy. That is wonderful to see. Keep smiling.",
+  Sad: "I can sense you are a bit low. I am here for you. You are not alone.",
+  Depressed: "You are safe. Please take a deep breath slowly. I am here with you.",
+  Stressed: "You seem stressed right now. Let us pause, breathe deeply, and relax together.",
+};
+
+const AUTO_VOICE_COOLDOWN_MS = 12000;
 
 export default function EmotionVoiceCompanion() {
   const {
@@ -28,6 +38,8 @@ export default function EmotionVoiceCompanion() {
   const [speaking, setSpeaking] = useState(false);
   const [lastMode, setLastMode] = useState("browser-tts");
   const [providerConfigured, setProviderConfigured] = useState(false);
+  const lastAutoEmotionRef = useRef(null);
+  const lastAutoSpeakAtRef = useRef(0);
 
   const recentEmotionHistory = useMemo(() => {
     return [...emotionHistory].slice(-5).reverse();
@@ -52,6 +64,7 @@ export default function EmotionVoiceCompanion() {
 
   const playVoice = useCallback(
     async (text) => {
+      if (!text) return;
       setSpeaking(true);
       const result = await playPersonalizedVoice({
         text,
@@ -64,6 +77,21 @@ export default function EmotionVoiceCompanion() {
     },
     [providerConfigured, selectedVoice]
   );
+
+  useEffect(() => {
+    if (!emotion) return;
+
+    const now = Date.now();
+    const hasEmotionChanged = lastAutoEmotionRef.current !== emotion;
+    const cooldownElapsed = now - lastAutoSpeakAtRef.current > AUTO_VOICE_COOLDOWN_MS;
+
+    if (!hasEmotionChanged && !cooldownElapsed) return;
+
+    const autoMessage = AUTO_EMOTION_VOICE_TEXT[emotion] || AUTO_EMOTION_VOICE_TEXT.Neutral;
+    lastAutoEmotionRef.current = emotion;
+    lastAutoSpeakAtRef.current = now;
+    playVoice(autoMessage);
+  }, [emotion, playVoice]);
 
   return (
     <div className="space-y-5 sm:space-y-6">
