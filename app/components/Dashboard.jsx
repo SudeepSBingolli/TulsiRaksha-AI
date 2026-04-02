@@ -181,7 +181,17 @@ export default function Dashboard({ userName = "Appa", userId = null }) {
         </div>
 
         {/* ═══════════════════════════════════════
-            SECTION 5: UPCOMING REMINDERS
+            SECTION 5: EMOTION + FACE RECOGNITION
+        ═══════════════════════════════════════ */}
+        <div className="animate-in slide-in-from-bottom duration-500 delay-[350ms]">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            😊 Emotion & Face Recognition
+          </h2>
+          <EmotionVoiceCompanion />
+        </div>
+
+        {/* ═══════════════════════════════════════
+            SECTION 6: UPCOMING REMINDERS
         ═══════════════════════════════════════ */}
         <div className="animate-in slide-in-from-bottom duration-500 delay-400">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
