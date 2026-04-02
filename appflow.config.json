@@ -2,7 +2,7 @@
   "version": 1,
   "apps": [
     {
-      "appId": "tulsiraksha-ai",
+      "appId": "5b592d1c",
       "root": ".",
       "platform": "capacitor",
       "capacitor": {
