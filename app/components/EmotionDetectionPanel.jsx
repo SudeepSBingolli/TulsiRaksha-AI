@@ -162,10 +162,10 @@ export default function EmotionDetectionPanel({ onEmotionChange }) {
         Real-time webcam emotion tracking for elder well-being.
       </p>
 
-      <div className="mt-4 rounded-2xl overflow-hidden border border-emerald-100 bg-black/80">
+      <div className="mt-4 mx-auto w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-emerald-100 bg-black/80">
         <video
           ref={videoRef}
-          className="w-full h-56 sm:h-64 object-cover"
+          className="w-full h-full object-contain"
           muted
           autoPlay
           playsInline
