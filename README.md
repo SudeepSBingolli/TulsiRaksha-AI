@@ -14,11 +14,8 @@
 
 ## Demo Video
 
-<p align="center">
-  <video src="public/home-page-vedio.mp4" controls width="900"></video>
-</p>
-
-If the video player is not visible on your browser, open the file directly: [Project Demo Video](public/home-page-vedio.mp4)
+- Watch Demo (direct file): [home-page-vedio.mp4](public/home-page-vedio.mp4)
+- Open in browser raw view: [Project Demo Video](./public/home-page-vedio.mp4)
 
 ## Problem Statement
 
