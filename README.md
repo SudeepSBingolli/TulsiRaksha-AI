@@ -1,88 +1,90 @@
 # TulsiRaksha AI
 
-TulsiRaksha AI is a voice-first elder-care web application focused on safety, routine health tracking, and family communication. It combines an elder-friendly dashboard, multilingual interaction, risk signaling, and WhatsApp caregiver reporting.
+<p align="center">
+  <img src="public/logo.jpeg" alt="TulsiRaksha AI Logo" width="180" />
+</p>
 
-## Overview
+<p align="center">
+  <b>Voice-First Elder Care Assistant with Smart Health Monitoring, Family Alerts, and AI Risk Signaling</b>
+</p>
 
-This repository includes:
+## Demo Video
 
-- A Next.js App Router frontend for daily care workflows.
-- Supabase authentication and cloud-sync support.
-- A Twilio WhatsApp alert/report pipeline.
-- Optional Python ML service for risk prediction inference.
+<p align="center">
+  <video src="public/home-page-vedio.mp4" controls width="900"></video>
+</p>
 
-## Core Features
+If the video player is not visible on your browser, open the file directly: [Project Demo Video](public/home-page-vedio.mp4)
 
-- Voice assistant panel for elder-friendly interaction (Web Speech API).
-- Multilingual UI dictionary support (English, Kannada, Hindi).
-- Health vitals and trend cards (heart rate, steps, sleep, medicine adherence).
-- Daily checklist and quick action utilities (including emergency flow).
-- Authentication-enabled dashboard sync with offline fallback behavior.
-- Caregiver reporting through WhatsApp via Twilio.
-- Optional local ML inference hook for risk classification.
+## Problem Statement
+
+Elders and caregivers need one simple platform for daily routine tracking, voice interaction, emergency signaling, and family communication. Most current solutions are fragmented across apps and hard to use for senior citizens.
+
+## Solution Summary
+
+TulsiRaksha AI combines:
+
+- Voice-guided interaction for accessibility
+- Health metric tracking and risk prediction support
+- Caregiver updates through WhatsApp
+- Family sync and elder profile workflows
+- Smartwatch + realtime data integration support
+
+## Key Features
+
+- Voice assistant UI for elder-friendly operation
+- Multilingual support (English, Kannada, Hindi)
+- Dashboard cards for heart rate, sleep, steps, and medication adherence
+- Risk-aware reminders and quick actions
+- Caregiver WhatsApp reporting pipeline
+- Authentication with Supabase
+- Optional Python ML risk service integration
+- Android packaging flow through Capacitor + Appflow
 
 ## Tech Stack
 
 - Frontend: Next.js 16, React 19
 - Styling: Tailwind CSS 4
-- Auth and data: Supabase
+- Auth/Cloud: Supabase
 - Messaging: Twilio WhatsApp API
-- Optional ML service: Flask + scikit-learn
+- ML Service: Python, Flask, scikit-learn
+- Mobile Packaging: Capacitor Android
+- CI Packaging: Ionic Appflow
 
-## Project Structure
+## Repository Structure
 
 ```text
-app/
-	api/
-		auth/
-		fitbit/
-		health-data/
-		send-whatsapp-report/
-	components/
-	login/
-	layout.js
-	page.js
-	i18n.js
-lib/
-	supabaseClient.js
-	twilioWhatsApp.js
-	whatsappReport.js
-	getRiskFromML.js
-public/
-app.py
-train_model.py
-health_data.csv
-model.pkl
+app/                          # Next.js App Router pages and API routes
+app/components/               # UI components
+app/api/                      # Server routes (voice, assistant, fitbit, whatsapp)
+lib/                          # Shared utilities (supabase, twilio, voice, reports)
+android/                      # Capacitor Android project
+public/                       # Static assets (logo, demo video)
+supabase/                     # SQL and schema support files
+app.py                        # Optional Python inference service
+train_model.py                # Model training script
+launch_stack.py               # Full local stack launcher
 ```
 
-## Prerequisites
+## Quick Start
 
-- Node.js 18+
-- npm 9+
-- Optional (for ML service): Python 3.10+
-
-## Local Setup
-
-1. Clone the repository.
+### 1) Clone and install
 
 ```bash
 git clone https://github.com/SudeepSBingolli/TulsiRaksha-AI.git
 cd TulsiRaksha-AI
-```
-
-2. Install frontend dependencies.
-
-```bash
 npm install
 ```
 
-3. Create environment file.
+### 2) Configure environment
 
 ```bash
-cp .env.example .env.local
+copy .env.local.template .env.local
 ```
 
-4. Start frontend development server.
+Update values in .env.local for Supabase and Twilio.
+
+### 3) Run web app
 
 ```bash
 npm run dev
@@ -90,103 +92,71 @@ npm run dev
 
 Open http://localhost:3000
 
-## Environment Variables
-
-Configure these values in .env.local:
+### 4) Optional Python ML API
 
 ```bash
+pip install -r requirements.txt
+python train_model.py
+python app.py
+```
+
+## Environment Variables
+
+Add required variables in .env.local:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
 CAREGIVER_WHATSAPP_TO=whatsapp:+919999999999
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## Available Scripts
+## NPM Scripts
 
-- npm run dev: Start development server
-- npm run build: Create production build
-- npm run start: Run production server
-- npm run lint: Run ESLint checks
-- npm run stack: Start frontend + Flask API + realtime bridge in one command
+- npm run dev: run local web development server
+- npm run build: production build
+- npm run start: run production server
+- npm run lint: lint project
+- npm run stack: launch integrated stack for demo/testing
+- npm run cap:sync: build and sync Capacitor Android project
 
-## Realtime Smartwatch Stack (One Command)
+## API Highlights
 
-From the project root, run:
+- POST /api/assistant
+- POST /api/voice
+- POST /api/speak
+- GET /api/health-data
+- POST /api/send-whatsapp-report
+- GET /api/fitbit/connect
+- GET /api/fitbit/sync
 
-```bash
-npm run stack
-```
+## Android Build Notes (Ionic Appflow)
 
-To target a specific smartwatch BLE address:
+- Appflow configuration is in appflow.config.json
+- Root gradle wrapper shim is provided at gradlew for CI compatibility
+- Capacitor generated gradle files are committed for deterministic cloud builds
 
-```bash
-python launch_stack.py --device 14:EC:88:EF:8C:46
-```
+## Evaluation Tips for Judges
 
-## WhatsApp Reporting Flow
+- Start with the Demo Video section
+- Run npm run dev and test voice + dashboard flow
+- Trigger caregiver messaging endpoint with sample data
+- Run npm run stack for integrated workflow demonstration
 
-- Route: POST /api/send-whatsapp-report
-- Input: User status payload (name, heart rate, risk, checklist, location)
-- Behavior:
-	- Normalizes and formats a readable care summary.
-	- Sends message to caregiver WhatsApp number via Twilio.
-	- Returns send status JSON response.
+## Additional Documentation
 
-## Optional ML Risk Service
+- [Setup Instructions](SETUP_INSTRUCTIONS.md)
+- [Integration Guide](INTEGRATION_GUIDE.md)
+- [Voice Setup](VOICE_SETUP.md)
+- [Vercel Deployment](VERCEL_DEPLOYMENT.md)
+- [Architecture](INTEGRATION_ARCHITECTURE.md)
 
-The frontend can call a local Python endpoint for risk prediction through lib/getRiskFromML.js.
+## Team
 
-### Train model
-
-```bash
-python train_model.py
-```
-
-### Run inference API
-
-```bash
-python app.py
-```
-
-Service endpoint expected by frontend:
-
-- POST http://127.0.0.1:5000/predict
-
-Payload:
-
-```json
-{
-	"heart_rate": 92,
-	"steps": 4600,
-	"sleep": 6.5,
-	"medicine": 1
-}
-```
-
-## API Endpoints in Repo
-
-- POST /api/send-whatsapp-report: Active, Twilio integration
-- GET /api/health-data: Placeholder
-- GET /api/auth/magic-link: Placeholder
-- GET /api/auth/webauthn/register-options: Placeholder
-- GET /api/fitbit/sync: Placeholder
-
-## Supabase Notes
-
-- Auth is wired through client-side Supabase session handling.
-- UI supports logged-in sync and offline demo behavior.
-- If signup trigger/database settings are incomplete, login page surfaces guidance for quick fixes.
-
-## Production Readiness Checklist
-
-- Set strong Supabase Row Level Security policies.
-- Validate Twilio credentials and caregiver destination numbers.
-- Add server-side input validation and rate limiting for API routes.
-- Replace placeholder API routes with real integrations.
-- Add monitoring, error reporting, and audit logs for alerts.
+Team Code Smashers
 
 ## License
 
-This project is licensed under the MIT License. See LICENSE for details.
+MIT License
